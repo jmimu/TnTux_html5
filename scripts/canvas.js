@@ -75,6 +75,9 @@ function Anim(name,node)
 		var obj=this;
 		this.img.onload=function()
 		{
+			console.log("this: "+this);
+			console.log("this.transform: "+this.transform);
+			this.transform(-1,0,0,1,0,0);
 			obj.len=Math.floor(this.width/obj.size[0])//animation length
 			if (this.height<obj.size[1]) console.log("Error on size of "+this.src);
 			window.dataManager.onNewLoaded(this.src);
