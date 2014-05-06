@@ -8,7 +8,7 @@ var CANVAS_HEIGHT = 320;
 var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
 					  "' height='" + CANVAS_HEIGHT + "'></canvas>");
 var canvas = canvasElement.get(0).getContext("2d");
-var FPS = 20;
+var FPS = 25;
 
 
 //TODO: if anim not found say pos and dir, and break!
@@ -44,7 +44,7 @@ function DataManager()
 					obj.anims[index_anim]={};
 					if (!"size" in data["anims"][index_anim])
 					{
-						console.log("DataManager: error! no size for animation "+index_anim);
+						dataError("DataManager: error! no size for animation "+index_anim);
 						return;
 					}
 					$.each(data["anims"][index_anim], function( index_dir, value ) {
@@ -92,7 +92,10 @@ function Anim(name,pos,src,size)
 		var obj=this;
 		this.img.onload=function()
 		{
-			if ((this.height<obj.size[1])||(this.width<obj.size[0])) console.log("Error on size of "+this.src);
+			if ((this.height<obj.size[1])||(this.width<obj.size[0]))
+			{
+				dataError("Error on size of "+this.src);
+			}
 			obj.len=Math.floor(this.width/obj.size[0])//animation length
 			if (obj.len<2)
 			{
@@ -135,7 +138,7 @@ function Sprite(x,y,pos,dir)
 			this.h=window.dataManager.anims[this.pos][this.dir].size[1];
 			this.loopedOnce=false;
 		}else
-			console.log(newpos+" does not exist");
+			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
 	}
 	
 	this.setPos(pos,dir);//call it in construtor
@@ -157,7 +160,7 @@ function Sprite(x,y,pos,dir)
 	
 	this.draw=function()
 	{
-		if (this.pos in window.dataManager.anims)
+		if ((this.pos in window.dataManager.anims)&&(this.dir in window.dataManager.anims[this.pos]))
 		{
 			if (window.dataManager.anims[this.pos][this.dir].vertical)
 				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,0,Math.floor(this.frame)*this.h,
@@ -165,8 +168,9 @@ function Sprite(x,y,pos,dir)
 			else
 				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,Math.floor(this.frame)*this.w,0,
 					this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
-		}else
-			console.log(this.pos+" not ready to draw");
+		}else{
+			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
+		}
 	}
 }
 
@@ -271,6 +275,19 @@ $(document).ready(function() //or $(function()
 	}
 );
 
+var gameUpdate;
+var globalError=false;
+
+//if asking for data that does not exist
+dataError=function(message)
+{
+	globalError=true;
+	message="FATAL ERROR: "+message;
+	console.log(message);
+	alert(message);
+	window.clearTimeout(gameUpdate);
+}
+
 startGame=function()
 {
 	console.log("Start game");
@@ -303,6 +320,8 @@ startGame=function()
 		//window.requestAnimFrame(update);
 	})();
 	
-	
-	setInterval(update,1000/FPS); //old version, prefer requestAnimFrame
+	if (!globalError)
+	{
+		gameUpdate=setInterval(update,1000/FPS); //old version, prefer requestAnimFrame
+	}
 }
