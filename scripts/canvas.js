@@ -12,6 +12,7 @@ var FPS = 20;
 
 
 //TODO: if anim not found say pos and dir, and break!
+//TODO: flipped animations are reversed!
 
 //data manager: load everything, says when all is ready
 function DataManager()
@@ -84,14 +85,20 @@ function Anim(name,pos,src,size)
 	console.log("create anim "+name+" pos "+pos+", src="+src);
 	this.size=size;//size of one frame
 	this.len=0;//animaton duration in frames
+	this.vertical=false;//is the animation in a vertical strip?
 	this.img=new Image();
 		
 	this.prepareOnLoad=function(){//closure to know the Anim when img.onLoad
 		var obj=this;
 		this.img.onload=function()
 		{
+			if ((this.height<obj.size[1])||(this.width<obj.size[0])) console.log("Error on size of "+this.src);
 			obj.len=Math.floor(this.width/obj.size[0])//animation length
-			if (this.height<obj.size[1]) console.log("Error on size of "+this.src);
+			if (obj.len<2)
+			{
+				obj.vertical=true;
+				obj.len=Math.floor(this.height/obj.size[1])//animation length
+			}
 			window.dataManager.onNewLoaded(this.src);
 		}
 	};
@@ -152,8 +159,12 @@ function Sprite(x,y,pos,dir)
 	{
 		if (this.pos in window.dataManager.anims)
 		{
-			canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img, Math.floor(this.frame)*this.w,0,
-				this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+			if (window.dataManager.anims[this.pos][this.dir].vertical)
+				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,0,Math.floor(this.frame)*this.h,
+					this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+			else
+				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,Math.floor(this.frame)*this.w,0,
+					this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
 		}else
 			console.log(this.pos+" not ready to draw");
 	}
@@ -195,14 +206,50 @@ function Ball()
 //player class, inherits Sprite
 function Player()
 {
-	Sprite.call(this,100,60,"tux_walk_side",1);// Parent constructor
+	Sprite.call(this,100,60,"tux_walk",1);// Parent constructor
 
 	this.update=function()
 	{
-		if (window.keydown["up"]) {this.y-=2;this.animate(0.3);}
-		if (window.keydown["down"]) {this.y+=2;this.animate(0.3);}
-		if (window.keydown["left"]) {this.x-=2;this.animate(0.3);if (this.dir!=1)this.setPos("tux_walk_side",1);}
-		if (window.keydown["right"]) {this.x+=2;this.animate(0.3);if (this.dir!=2)this.setPos("tux_walk_side",2);}
+		if (window.keydown["up"]) {this.y-=2;}
+		if (window.keydown["down"]) {this.y+=2;}
+		if (window.keydown["left"]) {this.x-=2;}
+		if (window.keydown["right"]) {this.x+=2;}
+
+		if (window.keydown["up"])
+		{
+			this.animate(0.3);
+			if (this.dir==4) this.setPos("tux_turn",3,this.endOfTurn);
+			else if (this.dir!=3) this.setPos("tux_walk",3);
+		}
+		else if (window.keydown["down"])
+		{
+			this.animate(0.3);
+			if (this.dir==3) this.setPos("tux_turn",4,this.endOfTurn);
+			else if (this.dir!=4) this.setPos("tux_walk",4);
+		}
+		else if (window.keydown["left"])
+		{
+			this.animate(0.3);
+			if (this.dir==2) this.setPos("tux_turn",1,this.endOfTurn);
+			else if (this.dir!=1) this.setPos("tux_walk",1);
+		}
+		else if (window.keydown["right"])
+		{
+			this.animate(0.3);
+			if (this.dir==1) this.setPos("tux_turn",2,this.endOfTurn);
+			else if (this.dir!=2) this.setPos("tux_walk",2);
+		}
+
+		
+		if (this.pos=="tux_turn")
+		{
+			this.animate(0.3);
+		}
+	}
+	
+	this.endOfTurn=function()
+	{
+		this.setPos("tux_walk",this.dir);
 	}
 }
 

@@ -1,10 +1,20 @@
 {
 	"anims":
 	{
-		"tux_walk_side" :
+		"tux_walk" :
 		{
 			"1" : "data/walk_side_1.png",
 			"2" : "data/walk_side_2.png",
+			"3" : "data/walk_up_1.png",
+			"4" : "data/walk_down_1.png",
+			"size" : [48,64]
+		},
+		"tux_turn" :
+		{
+			"1" : "data/hz_turn_1.png",
+			"2" : "data/hz_turn_2.png",
+			"3" : "data/vert_turn_1.png",
+			"4" : "data/vert_turn_2.png",
 			"size" : [48,64]
 		},
 		"ball_roll" :
