@@ -11,6 +11,8 @@ var canvas = canvasElement.get(0).getContext("2d");
 var FPS = 20;
 
 
+//TODO: if anim not found say pos and dir, and break!
+
 //data manager: load everything, says when all is ready
 function DataManager()
 {
@@ -35,12 +37,25 @@ function DataManager()
 		console.log("DataManager: Read file: "+obj.filename);
 		$.getJSON(obj.filename, function(data) {
 			console.log("???: "+data["anims"]);
-			$.each(data["anims"], function( index, value ) {
-					console.log("DataManager: got: "+index);					
-					obj.numAsked++;//at first, have to read jsonfile
-					obj.numToLoad++;
-					obj.anims[index]=new Anim(index,value);
-					$("#status").html("Loading "+(obj.numAsked-obj.numToLoad)+"/"+obj.numAsked);
+			$.each(data["anims"], function( index_anim, value_anim ) {
+					console.log("DataManager: found animation "+index_anim);
+					console.log("DataManager: animation size"+data["anims"][index_anim]["size"]);
+					obj.anims[index_anim]={};
+					if (!"size" in data["anims"][index_anim])
+					{
+						console.log("DataManager: error! no size for animation "+index_anim);
+						return;
+					}
+					$.each(data["anims"][index_anim], function( index_dir, value ) {
+						if (index_dir!="size")
+						{
+							obj.numAsked++;//at first, have to read jsonfile
+							obj.numToLoad++;
+							obj.anims[index_anim][index_dir]=new Anim(index_anim,index_dir,
+								value,data["anims"][index_anim]["size"]);
+							$("#status").html("Loading "+(obj.numAsked-obj.numToLoad)+"/"+obj.numAsked);
+						}
+					});
 				});
 			for (p in obj.anims)
 				console.log("Got anim load: "+p);
@@ -64,10 +79,10 @@ function DataManager()
 window.dataManager=new DataManager();
 
 //animation class
-function Anim(name,node)
+function Anim(name,pos,src,size)
 {
-	console.log("create anim "+name);
-	this.size=node["size"];//size of one frame
+	console.log("create anim "+name+" pos "+pos+", src="+src);
+	this.size=size;//size of one frame
 	this.len=0;//animaton duration in frames
 	this.img=new Image();
 		
@@ -75,9 +90,6 @@ function Anim(name,node)
 		var obj=this;
 		this.img.onload=function()
 		{
-			console.log("this: "+this);
-			console.log("this.transform: "+this.transform);
-			this.transform(-1,0,0,1,0,0);
 			obj.len=Math.floor(this.width/obj.size[0])//animation length
 			if (this.height<obj.size[1]) console.log("Error on size of "+this.src);
 			window.dataManager.onNewLoaded(this.src);
@@ -85,7 +97,7 @@ function Anim(name,node)
 	};
 	this.prepareOnLoad();
 	
-	this.img.src=node["src"];
+	this.img.src=src;
 }
 
 //sprite class
@@ -99,17 +111,21 @@ function Sprite(x,y,pos,dir)
 	this.x=x;
 	this.y=y;
 	this.loopedOnce=false;//to know if one loop of animation is finished
+	this.callback=0;//call this function at the end of the animation
 	
-	this.setPos=function(newpos,dir)
+	//you can specify a callback when the animation is finished
+	this.setPos=function(newpos,dir,callback)
 	{
 		this.pos=newpos;
 		this.dir=dir;
-		this.frame=0;		
+		this.frame=0;
+		if(typeof(callback)==='undefined') callback = 0;
+		this.callback=callback;
 		if (this.pos in window.dataManager.anims)
 		{
 			console.log("pos set to  "+newpos);
-			this.w=window.dataManager.anims[this.pos].size[0];
-			this.h=window.dataManager.anims[this.pos].size[1];
+			this.w=window.dataManager.anims[this.pos][this.dir].size[0];
+			this.h=window.dataManager.anims[this.pos][this.dir].size[1];
 			this.loopedOnce=false;
 		}else
 			console.log(newpos+" does not exist");
@@ -122,10 +138,12 @@ function Sprite(x,y,pos,dir)
 		if (this.pos in window.dataManager.anims)
 		{
 			this.frame+=dt;
-			if (Math.floor(this.frame)>=window.dataManager.anims[this.pos].len)
+			if (Math.floor(this.frame)>=window.dataManager.anims[this.pos][this.dir].len)
 			{
 				this.frame=0;
 				this.loopedOnce=true;
+				if (this.callback!=0)
+					this.callback();					
 			}
 		}
 	}
@@ -134,7 +152,7 @@ function Sprite(x,y,pos,dir)
 	{
 		if (this.pos in window.dataManager.anims)
 		{
-			canvas.drawImage(window.dataManager.anims[this.pos].img, Math.floor(this.frame)*this.w,0,
+			canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img, Math.floor(this.frame)*this.w,0,
 				this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
 		}else
 			console.log(this.pos+" not ready to draw");
@@ -161,14 +179,15 @@ function Ball()
 		if ((Math.abs(this.x-player.x)<=(this.w/2+player.w/2))&&
 			(Math.abs(this.y-player.y)<=(this.h/2+player.h/2)))
 		{
-			this.setPos("ball_explode",0);
+			this.setPos("ball_explode",1,this.endOfExplosion);
 			this.vx*=-1;
 		}
-		if ((this.pos=="ball_explode")&&(this.loopedOnce))
-		{
-			this.setPos("ball_roll",0);
-		}
 		this.animate(0.2);
+	}
+	
+	this.endOfExplosion=function()
+	{
+		this.setPos("ball_roll",1);
 	}
 }
 //Ball.prototype = Object.create(Sprite.prototype);// Inheritance
@@ -182,8 +201,8 @@ function Player()
 	{
 		if (window.keydown["up"]) {this.y-=2;this.animate(0.3);}
 		if (window.keydown["down"]) {this.y+=2;this.animate(0.3);}
-		if (window.keydown["left"]) {this.x-=2;this.animate(0.3);}
-		if (window.keydown["right"]) {this.x+=2;this.animate(0.3);}
+		if (window.keydown["left"]) {this.x-=2;this.animate(0.3);if (this.dir!=1)this.setPos("tux_walk_side",1);}
+		if (window.keydown["right"]) {this.x+=2;this.animate(0.3);if (this.dir!=2)this.setPos("tux_walk_side",2);}
 	}
 }
 
@@ -201,7 +220,7 @@ window.requestAnimFrame = (function(){
 
 $(document).ready(function() //or $(function()
 	{
-		window.dataManager.loadfile(startGame,"data/ball.json");
+		window.dataManager.loadfile(startGame,"data/data1.json");
 	}
 );
 
@@ -227,10 +246,6 @@ startGame=function()
 	
 	var ball=new Ball();
 	var player=new Player();
-	
-	//load picture
-	var ball_pic = new Image();
-	ball_pic.src = 'data/ball_roll1.png';
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);

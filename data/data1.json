@@ -1,0 +1,23 @@
+{
+	"anims":
+	{
+		"tux_walk_side" :
+		{
+			"1" : "data/walk_side_1.png",
+			"2" : "data/walk_side_2.png",
+			"size" : [48,64]
+		},
+		"ball_roll" :
+		{
+			"1" : "data/ball_roll1_1.png",
+			"2" : "data/ball_roll1_2.png",
+			"size" : [32,32]
+		},
+		"ball_explode" :
+		{
+			"1" : "data/ball_expl_1.png",
+			"2" : "data/ball_expl_2.png",
+			"size" : [32,32]
+		}
+	}
+}
