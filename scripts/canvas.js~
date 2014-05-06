@@ -1,0 +1,270 @@
+//see http://www.html5rocks.com/en/tutorials/canvas/performance/
+
+//from http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
+var CANVAS_WIDTH = 480;
+var CANVAS_HEIGHT = 320;
+
+var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
+					  "' height='" + CANVAS_HEIGHT + "'></canvas>");
+var canvas = canvasElement.get(0).getContext("2d");
+var FPS = 20;
+
+/*TODO:
+ * - load every data (make a data manager), show message, count how many files still waiting
+ * - start only when all is loaded
+ * 
+ * */
+
+//data manager: load everything, says when all is ready
+function DataManager()
+{
+	console.log("DataManager: create");
+	this.allbackReady=0;
+	this.filename="?";
+	this.ready=false;
+	this.numAsked=0;
+	this.numToLoad=0;
+	this.anims={};
+	this.sounds={};
+	
+	//make a closure to read the json file
+	this.loadfile = function(callbackReady,filename)
+	{
+		var obj = this;//closure to access "this"
+		obj.callbackReady=callbackReady;
+		obj.filename=filename;
+		
+		obj.numAsked++;//at first, have to read jsonfile
+		obj.numToLoad++;
+		console.log("DataManager: Read file: "+obj.filename);
+		$.getJSON(obj.filename, function(data) {
+			console.log("???: "+data["anims"]);
+			$.each(data["anims"], function( index, value ) {
+					console.log("DataManager: got: "+index);					
+					obj.numAsked++;//at first, have to read jsonfile
+					obj.numToLoad++;
+					obj.anims[index]=new Anim(index,value);
+					$("#status").html("Loading "+(obj.numAsked-obj.numToLoad)+"/"+obj.numAsked);
+				});
+			for (p in obj.anims)
+				console.log("Got anim load: "+p);
+			obj.numToLoad--;//json file is read
+		});
+	};
+
+	this.onNewLoaded=function(name)
+	{
+		console.log("DataManager: loaded "+name);
+		this.numToLoad--;
+		$("#status").html("Loading "+(this.numAsked-this.numToLoad)+"/"+this.numAsked);
+		if (this.numToLoad==0)
+		{
+			$("#status").html("Ready!");
+			this.callbackReady();
+		}
+	}
+}
+
+window.dataManager=new DataManager();
+
+//animation class
+function Anim(name,node)
+{
+	console.log("create anim "+name);
+	this.img=new Image();
+	this.img.onload=function()
+	{
+		window.dataManager.onNewLoaded(this.src);
+	}
+	this.img.src=node["src"];
+	this.size=node["size"];
+	this.len=Math.floor(this.img.width/this.size[0])//animation length
+}
+
+//sprite class
+function Sprite(x,y)
+{
+	this.pos="?";//current animation
+	this.dir=0;//current direction
+	this.frame=0;//where we are in the animation
+	this.w=-1;//size of current picture
+	this.h=-1;//size of current picture	
+	this.x=x;
+	this.y=y;
+	this.loopedOnce=false;//to know if one loop of animation is finished
+	
+	this.setPos=function(newpos,dir)
+	{
+		this.pos=newpos;
+		this.dir=dir;
+		this.frame=0;		
+		if (this.pos in window.dataManager.anims)
+		{
+			console.log("pos set to  "+newpos);
+			this.w=window.dataManager.anims[this.pos].size[0];
+			this.h=window.dataManager.anims[this.pos].size[1];
+			this.loopedOnce=false;
+		}else
+			console.log(newpos+" does not exist");
+	}
+	
+	this.animate=function(dt)
+	{
+		if (this.pos in window.dataManager.anims)
+		{
+			this.frame+=dt;
+			if (Math.floor(this.frame)>=window.dataManager.anims[this.pos].len)
+			{
+				this.frame=0;
+				this.loopedOnce=true;
+			}
+		}
+	}
+	
+	this.draw=function()
+	{
+		if (this.pos in window.dataManager.anims)
+		{
+			canvas.drawImage(window.dataManager.anims[this.pos].img, Math.floor(this.frame)*this.w,0,
+				this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+		}else
+			console.log(this.pos+" not ready to draw");
+	}
+}
+
+
+//ball class
+function Ball()
+{
+	this.vx=3*0;
+	this.vy=3*0;
+	this.anim=0;
+	this.sprite=new Sprite(200,100);
+	this.sprite.setPos("roll",1);
+	
+	this.update=function(player)
+	{
+		if ((this.sprite.x<0)||(this.sprite.x>=CANVAS_WIDTH))
+			this.vx*=-1;
+		if ((this.sprite.y<0)||(this.sprite.y>=CANVAS_HEIGHT))
+			this.vy*=-1;
+		this.sprite.x+=this.vx;
+		this.sprite.y+=this.vy;
+		
+		if ((Math.abs(this.sprite.x-player.x)<=(this.sprite.w/2+player.w/2))&&
+			(Math.abs(this.sprite.y-player.y)<=(this.sprite.h/2+player.h/2)))
+		{
+			this.sprite.setPos("explode",0);
+			this.vx*=-1;
+		}
+		if ((this.sprite.pos=="explode")&&(this.sprite.loopedOnce))
+		{
+			this.sprite.setPos("roll",0);
+		}
+		this.sprite.animate(0.2);
+	}
+}
+
+function Player()
+{
+	this.x=100;
+	this.y=60;
+	this.h=100;
+	this.w=4;
+	
+	this.draw=function()
+	{
+		canvas.fillStyle="#ff09ac";
+		canvas.fillRect(this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+	}
+	this.update=function()
+	{
+		if (window.keydown["up"]) this.y-=3;
+		if (window.keydown["down"]) this.y+=3;
+	}
+	
+}
+
+//from http://fr.openclassrooms.com/informatique/cours/dynamisez-vos-sites-web-avec-javascript/animations-2
+window.requestAnimFrame = (function(){
+    return window.requestAnimationFrame       || // La forme standardisee
+           window.webkitRequestAnimationFrame || // Pour Chrome et Safari
+           window.mozRequestAnimationFrame    || // Pour Firefox
+           window.oRequestAnimationFrame      || // Pour Opera
+           window.msRequestAnimationFrame     || // Pour Internet Explorer
+           function(callback){                   // Pour les eleves du dernier rang
+               window.setTimeout(callback, 1000 / 60);
+           };
+})();
+
+$(document).ready(function() //or $(function()
+	{
+		window.dataManager.loadfile(startGame,"ball.json");
+	}
+);
+
+startGame=function()
+{
+	console.log("Start game");
+	canvasElement.appendTo('body');
+	
+	//taken from http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
+	window.keydown = {};
+	function keyName(event) {
+		return jQuery.hotkeys.specialKeys[event.which] ||
+			String.fromCharCode(event.which).toLowerCase();
+	}
+
+	$(document).bind("keydown", function(event) {
+		window.keydown[keyName(event)] = true;
+	});
+
+	$(document).bind("keyup", function(event) {
+		window.keydown[keyName(event)] = false;
+	});
+	
+	//var drawing=document.getElementById("drawing");
+	//var ctx_drawing=drawing.getContext("2d");
+	//var ctx_drawing=document.querySelector('#drawing').getContext("2d");//html5
+	//var ctx_drawing=$('#drawing')[0].getContext("2d");//jquery
+	
+	//var age = prompt('Entrez votre age :');
+	//age=parseInt(age);
+	//if (confirm('Voulez-vous exécuter le code Javascript de cette page ?')) {...
+	
+	//arg facultatifs:
+	//if (typeof allowCancel === 'undefined') { allowCancel=false;
+	
+	
+	//ctx_drawing.fillRect(10,10,100,50);
+	var ball=new Ball();
+	var player=new Player();
+	
+	//load picture
+	var ball_pic = new Image();
+	ball_pic.src = 'data/ball_roll1.png';
+	//check that the picture is loaded with ball_pic.onload = function(){...
+	  
+	
+/*		document.onkeydown=function(e)
+	{
+		if (e.which==38)
+			player.y-=3;
+		if (e.which==40)
+			player.y+=3;
+	}*/
+	
+	//setTimeout(function(){ctx_drawing.clearRect(0,0,800,400);ball.update();ball.draw();},100);//devrait etre mieux mais ne marche pas
+	
+	(update=function(){
+		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+		player.update();
+		ball.update(player);
+		ball.sprite.draw();
+		player.draw();
+		//window.requestAnimFrame(update);
+	})();
+	
+	
+	setInterval(update,1000/FPS); //old version, prefer requestAnimFrame
+}
