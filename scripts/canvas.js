@@ -10,11 +10,6 @@ var canvasElement = $("<canvas width='" + CANVAS_WIDTH +
 var canvas = canvasElement.get(0).getContext("2d");
 var FPS = 20;
 
-/*TODO:
- * - load every data (make a data manager), show message, count how many files still waiting
- * - start only when all is loaded
- * 
- * */
 
 //data manager: load everything, says when all is ready
 function DataManager()
@@ -72,16 +67,22 @@ window.dataManager=new DataManager();
 function Anim(name,node)
 {
 	console.log("create anim "+name);
-	this.size=node["size"];
+	this.size=node["size"];//size of one frame
+	this.len=0;//animaton duration in frames
 	this.img=new Image();
-	this.img.onload=function()
-	{
-		window.dataManager.onNewLoaded(this.src);
-	}
+		
+	this.prepareOnLoad=function(){//closure to know the Anim when img.onLoad
+		var obj=this;
+		this.img.onload=function()
+		{
+			obj.len=Math.floor(this.width/obj.size[0])//animation length
+			if (this.height<obj.size[1]) console.log("Error on size of "+this.src);
+			window.dataManager.onNewLoaded(this.src);
+		}
+	};
+	this.prepareOnLoad();
+	
 	this.img.src=node["src"];
-	//TODO do it on onload
-	this.len=Math.floor(this.img.width/this.size[0])//animation length
-	if (this.img.height<this.size[1]) console.log("Error on size of "+this.src);
 }
 
 //sprite class
