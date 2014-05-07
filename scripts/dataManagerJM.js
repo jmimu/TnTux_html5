@@ -8,6 +8,7 @@ function DataManager()
 	this.numAsked=0;
 	this.numToLoad=0;
 	this.anims={};
+	this.level=0;//class Level
 	this.sounds={};
 	
 	//make a closure to read the json file
@@ -21,7 +22,7 @@ function DataManager()
 		obj.numToLoad++;
 		console.log("DataManager: Read file: "+obj.filename);
 		$.getJSON(obj.filename, function(data) {
-			console.log("???: "+data["anims"]);
+			//read anims
 			$.each(data["anims"], function( index_anim, value_anim ) {
 					console.log("DataManager: found animation "+index_anim);
 					console.log("DataManager: animation size"+data["anims"][index_anim]["size"]);
@@ -44,6 +45,18 @@ function DataManager()
 				});
 			for (p in obj.anims)
 				console.log("Got anim load: "+p);
+
+			//read level
+			if (!"level" in data)
+			{
+				dataError("DataManager: error! No level specified in "+obj.filename);
+				return;
+			}
+			obj.numAsked++;//has to read level
+			obj.numToLoad++;
+			obj.level=new Level(data["level"]);
+			
+				
 			obj.numToLoad--;//json file is read
 		});
 	};
@@ -67,7 +80,7 @@ dataError=function(message)
 {
 	globalError=true;
 	message="FATAL ERROR: "+message;
-	console.log(message);
+	console.error(message);
 	alert(message);
 	window.clearTimeout(gameUpdate);
 }

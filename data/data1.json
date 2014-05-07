@@ -30,5 +30,5 @@
 			"size" : [32,32]
 		}
 	},
-	"level": "lvl1.json"
+	"level": "data/lvl1.json"
 }
