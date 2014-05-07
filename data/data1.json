@@ -29,5 +29,6 @@
 			"2" : "data/ball_expl_2.png",
 			"size" : [32,32]
 		}
-	}
+	},
+	"level": "lvl1.json"
 }
