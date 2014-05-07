@@ -37,6 +37,7 @@ startGame=function()
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		player.update();
 		ball.update(player);
+		window.dataManager.level.draw(-player.x,-player.y);
 		ball.draw();
 		player.draw();
 		//window.requestAnimFrame(update);

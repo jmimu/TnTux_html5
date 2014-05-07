@@ -22,7 +22,6 @@ function Level(jsonfile)
 			obj.tileSize=[data["tilewidth"],data["tileheight"]];
 			console.log("Level: tileSize="+obj.tileSize);
 			
-			
 			//read tilesets
 			$.each(data["tilesets"], function( index_tileset, value_tileset ) {
 					console.log("Level: found tileset "+value_tileset["name"]);
@@ -41,5 +40,39 @@ function Level(jsonfile)
 	};
 	
 	this.loadfile();
+	
+	this.draw=function(scrollX,scrollY)
+	{
+		if (scrollX>0) scrollX=0;
+		if (scrollY>0) scrollY=0;
+		var drawW=Math.floor(CANVAS_WIDTH/this.tileSize[0])+1;
+		var drawH=Math.floor(CANVAS_HEIGHT/this.tileSize[1])+1;
+		var drawX=Math.floor(-scrollX/this.tileSize[0]);
+		var drawY=Math.floor(-scrollY/this.tileSize[1]);
+		var i=drawX+this.mapSize[0]*drawY;//index of current tile
+		
+		//scroll value, between 0 and tileSize-1
+		scrollX=scrollX%this.tileSize[0];
+		scrollY=scrollY%this.tileSize[1];
+		
+		var canvasX=scrollX;
+		var canvasY=scrollY;
+		
+		for (var y=drawY;y<drawY+drawH;y++)
+		{			
+			for (var x=drawX;x<drawX+drawW;x++)
+			{
+				if ((0<=x)&&(x<this.mapSize[0])&&(0<=y)&&(y<this.mapSize[1]))
+					canvas.drawImage(this.tiles.img,(this.map[i]-1)*this.tileSize[0],0,
+						this.tileSize[0],this.tileSize[1],canvasX,canvasY,this.tileSize[0],this.tileSize[1]);
+				
+				canvasX+=this.tileSize[0];
+				i+=1;
+			}
+			i+=(this.mapSize[0]-drawW);
+			canvasX=scrollX;
+			canvasY+=this.tileSize[0];
+		}
+	}
 	
 }
