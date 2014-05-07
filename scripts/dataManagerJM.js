@@ -10,6 +10,26 @@ function DataManager()
 	this.anims={};
 	this.level=0;//class Level
 	this.sounds={};
+
+	//call this function each time a ressource has to be loaded
+	this.onNewToLoad=function()
+	{
+		this.numAsked++;
+		this.numToLoad++;
+	}
+
+	//call this function when a ressource has been loaded
+	this.onNewLoaded=function(name)
+	{
+		console.log("DataManager: loaded "+name);
+		this.numToLoad--;
+		$("#status").html("Loading "+(this.numAsked-this.numToLoad)+"/"+this.numAsked);
+		if (this.numToLoad==0)
+		{
+			$("#status").html("Ready!");
+			this.callbackReady();
+		}
+	}
 	
 	//make a closure to read the json file
 	this.loadfile = function(callbackReady,filename)
@@ -18,8 +38,7 @@ function DataManager()
 		obj.callbackReady=callbackReady;
 		obj.filename=filename;
 		
-		obj.numAsked++;//at first, have to read jsonfile
-		obj.numToLoad++;
+		obj.onNewToLoad();//at first, have to read jsonfile
 		console.log("DataManager: Read file: "+obj.filename);
 		$.getJSON(obj.filename, function(data) {
 			//read anims
@@ -35,8 +54,6 @@ function DataManager()
 					$.each(data["anims"][index_anim], function( index_dir, value ) {
 						if (index_dir!="size")
 						{
-							obj.numAsked++;//at first, have to read jsonfile
-							obj.numToLoad++;
 							obj.anims[index_anim][index_dir]=new Anim(index_anim,index_dir,
 								value,data["anims"][index_anim]["size"]);
 							$("#status").html("Loading "+(obj.numAsked-obj.numToLoad)+"/"+obj.numAsked);
@@ -52,26 +69,13 @@ function DataManager()
 				dataError("DataManager: error! No level specified in "+obj.filename);
 				return;
 			}
-			obj.numAsked++;//has to read level
-			obj.numToLoad++;
+			obj.onNewToLoad();//has to read level
 			obj.level=new Level(data["level"]);
 			
 				
-			obj.numToLoad--;//json file is read
+			obj.onNewLoaded();//json file is read
 		});
 	};
-
-	this.onNewLoaded=function(name)
-	{
-		console.log("DataManager: loaded "+name);
-		this.numToLoad--;
-		$("#status").html("Loading "+(this.numAsked-this.numToLoad)+"/"+this.numAsked);
-		if (this.numToLoad==0)
-		{
-			$("#status").html("Ready!");
-			this.callbackReady();
-		}
-	}
 }
 
 

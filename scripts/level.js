@@ -16,10 +16,24 @@ function Level(jsonfile)
 			console.log("Getting json data from "+this.jsonfile);
 			if (!"layers" in data){dataError("DataManager: error! No layers specified in "+obj.jsonfile);return;}
 			if (!"tilesets" in data){dataError("DataManager: error! No tilesets specified in "+obj.jsonfile);return;}
+			
+			obj.mapSize=[data["width"],data["height"]];
+			console.log("Level: mapSize="+obj.mapSize);
+			obj.tileSize=[data["tilewidth"],data["tileheight"]];
+			console.log("Level: tileSize="+obj.tileSize);
+			
+			
+			//read tilesets
+			$.each(data["tilesets"], function( index_tileset, value_tileset ) {
+					console.log("Level: found tileset "+value_tileset["name"]);
+					obj.tiles=new Anim("main_tiles",0,"data/"+value_tileset["image"],obj.tileSize);
+				});
 
 			//read layers
 			$.each(data["layers"], function( index_layer, value_layer ) {
 					console.log("Level: found layer "+value_layer["name"]);
+					if ((value_layer["type"]=="tilelayer")&&(value_layer["visible"]==true)&&(value_layer["name"]=="main"))
+						obj.map=value_layer["data"];
 				});
 
 			window.dataManager.onNewLoaded(obj.jsonfile);

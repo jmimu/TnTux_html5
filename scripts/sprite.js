@@ -4,15 +4,21 @@
 function Anim(name,pos,src,size)
 {
 	console.log("create anim "+name+" pos "+pos+", src="+src);
+	this.name=name;
+	this.pos=pos;
+	
 	this.size=size;//size of one frame
 	this.len=0;//animaton duration in frames
 	this.vertical=false;//is the animation in a vertical strip?
 	this.img=new Image();
+	
+	window.dataManager.onNewToLoad();
 		
 	this.prepareOnLoad=function(){//closure to know the Anim when img.onLoad
 		var obj=this;
 		this.img.onload=function()
 		{
+			console.log("Loaded anim "+obj.name+" pos "+obj.pos+", src="+obj.img.src+" size="+obj.size);
 			if ((this.height<obj.size[1])||(this.width<obj.size[0]))
 			{
 				dataError("Error on size of "+this.src);
