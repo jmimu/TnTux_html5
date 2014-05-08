@@ -107,4 +107,44 @@ function Level(jsonfile)
 		else
 			return this.metaTilesSens[this.metaMap[index]-this.firstMetaTileIndex];
 	}
+	
+	this.collideHz=function(x1,x2,y)
+	{
+		var x;
+		if (x1>x2)
+		{
+			x=x2;
+			x2=x1;
+			x1=x;
+		}
+		x=x1;
+		var output=[];
+		while (x<=x2)
+		{
+			output.push(this.collide(x,y));
+			x+=this.tileSize[0];
+		}
+		output.push(this.collide(x2,y));
+		return output;
+	}
+	
+	this.collideVert=function(x,y1,y2)
+	{
+		var y;
+		if (y1>y2)
+		{
+			y=y2;
+			y2=y1;
+			y1=y;
+		}
+		y=y1;
+		var output=[];
+		while (y<=y2)
+		{
+			output.push(this.collide(x,y));
+			y+=this.tileSize[1];
+		}
+		output.push(this.collide(x,y2));
+		return output;
+	}
 }

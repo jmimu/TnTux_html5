@@ -8,14 +8,17 @@ function Ball()
 	
 	this.update=function(player,level)
 	{
-		if ((this.x<0)||(this.x>=CANVAS_WIDTH))
+		if ((this.x<0)||(this.x>=CANVAS_WIDTH-this.w))
 			this.vx*=-1;
-		if ((this.y<0)||(this.y>=CANVAS_HEIGHT))
+		if ((this.y<0)||(this.y>=CANVAS_HEIGHT-this.h))
 			this.vy*=-1;
 		this.x+=this.vx;
 		this.y+=this.vy;
 		
-		if (level.collide(this.x,this.y)=="bloc")
+		if ((level.collide(this.x,this.y)=="bloc")||
+			(level.collide(this.x+this.w-1,this.y)=="bloc")||
+			(level.collide(this.x+this.w-1,this.y+this.h-1)=="bloc")||
+			(level.collide(this.x,this.y+this.h-1)=="bloc"))
 		{
 			this.vx*=-1;this.vy*=-1;
 		}
@@ -41,12 +44,19 @@ function Player()
 {
 	Sprite.call(this,100,60,"tux_walk",1);// Parent constructor
 
-	this.update=function()
+	this.update=function(level)
 	{
-		if (window.keydown["up"]) {this.y-=2;}
-		if (window.keydown["down"]) {this.y+=2;}
-		if (window.keydown["left"]) {this.x-=2;}
-		if (window.keydown["right"]) {this.x+=2;}
+		var vx=0;
+		var vy=0;
+		if (window.keydown["up"]) {vy=-2;}
+		if (window.keydown["down"]) {vy=2;}
+		if (window.keydown["left"]) {vx=-2;}
+		if (window.keydown["right"]) {vx=2;}
+
+		var depl=this.testCollideLevel(level,vx,vy);
+		
+		this.x+=depl[0];
+		this.y+=depl[1];
 
 		if (window.keydown["up"])
 		{

@@ -36,9 +36,9 @@ startGame=function()
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-		player.update();
+		player.update(level);
 		ball.update(player,level);
-		camera.moveTo(ball.x,ball.y);
+		camera.moveTo(player.x,player.y);
 		level.draw(camera);
 		ball.draw(camera);
 		player.draw(camera);

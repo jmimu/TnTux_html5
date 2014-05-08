@@ -91,10 +91,59 @@ function Sprite(x,y,pos,dir)
 			
 			canvas.drawImage(anim.img,frameXimg,frameYimg,
 					anim.size[0],anim.size[1],
-					this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
+					this.x-camera.getX(),this.y-camera.getY(),this.w,this.h);
 		}else{
 			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
 		}
+	}
+	
+	this.testCollideLevel=function(level,vx,vy)
+	{
+		if (vx>0)//go right
+		{
+			var collide=level.collideVert(this.x+this.w-1+vx,this.y,this.y+this.h-1);
+			//console.log("collide:"+collide);
+			if ($.inArray("bloc",collide)>-1) //round to next tile
+			{
+				//console.log("right collide "+this.x+" "+vx);
+				vx=(Math.floor((this.x+this.w+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.w);
+				//console.log("vx "+vx);
+			}
+		}
+		if (vx<0)//go left
+		{
+			var collide=level.collideVert(this.x+vx,this.y,this.y+this.h-1);
+			//console.log("collide:"+collide);
+			if ($.inArray("bloc",collide)>-1) //round to next tile
+			{
+				//console.log("left collide "+this.x+" "+vx);
+				vx=(Math.floor((this.x+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x);
+				//console.log("vx "+vx);
+			}
+		}
+		if (vy>0)//go down
+		{
+			var collide=level.collideHz(this.x,this.x+this.w-1,this.y+this.h-1+vy);
+			//console.log("collide:"+collide);
+			if ($.inArray("bloc",collide)>-1) //round to next tile
+			{
+				//console.log("down collide "+this.y+" "+vy);
+				vy=(Math.floor((this.y+this.h+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.h);
+				//console.log("vy "+vy);
+			}
+		}
+		if (vy<0)//go up
+		{
+			var collide=level.collideHz(this.x,this.x+this.w-1,this.y+vy);
+			//console.log("collide:"+collide);
+			if ($.inArray("bloc",collide)>-1) //round to next tile
+			{
+				//console.log("up collide "+this.y+" "+vy);
+				vy=(Math.floor((this.y+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y);
+				//console.log("vy "+vy);
+			}
+		}		
+		return [vx,vy];
 	}
 }
 
