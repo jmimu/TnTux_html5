@@ -13,7 +13,6 @@ var gameUpdate;
 startGame=function()
 {
 	console.log("Start game");
-	canvasElement.appendTo('body');
 	
 	//taken from http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
 	window.keydown = {};
@@ -32,14 +31,16 @@ startGame=function()
 	
 	var ball=new Ball();
 	var player=new Player();
+	var camera=new Camera(window.dataManager.level);
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		player.update();
 		ball.update(player);
-		window.dataManager.level.draw(-player.x,-player.y);
-		ball.draw();
-		player.draw();
+		camera.moveTo(ball.x,ball.y);
+		window.dataManager.level.draw(camera);
+		ball.draw(camera);
+		player.draw(camera);
 		//window.requestAnimFrame(update);
 	})();
 	

@@ -85,16 +85,16 @@ function Sprite(x,y,pos,dir)
 		}
 	}
 	
-	this.draw=function()
+	this.draw=function(camera)
 	{
 		if ((this.pos in window.dataManager.anims)&&(this.dir in window.dataManager.anims[this.pos]))
 		{
 			if (window.dataManager.anims[this.pos][this.dir].vertical)
 				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,0,Math.floor(this.frame)*this.h,
-					this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+					this.w,this.h,this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
 			else
 				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,Math.floor(this.frame)*this.w,0,
-					this.w,this.h,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+					this.w,this.h,this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
 		}else{
 			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
 		}

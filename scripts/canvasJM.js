@@ -10,6 +10,7 @@ var canvasElement = $("<canvas width='" + CANVAS_WIDTH +
 var canvas = canvasElement.get(0).getContext("2d");
 var FPS = 25;
 
+canvasElement.appendTo('body');
 
 //from http://fr.openclassrooms.com/informatique/cours/dynamisez-vos-sites-web-avec-javascript/animations-2
 window.requestAnimFrame = (function(){
@@ -23,3 +24,31 @@ window.requestAnimFrame = (function(){
            };
 })();
 
+function Camera(level)
+{
+	this.level=level;
+	this.xmin=CANVAS_WIDTH/2;
+	this.ymin=CANVAS_HEIGHT/2;
+	this.xmax=level.mapSize[0]*level.tileSize[0]-CANVAS_WIDTH/2;
+	this.ymax=level.mapSize[1]*level.tileSize[1]-CANVAS_HEIGHT/2;
+	this.x=this.xmin;
+	this.y=this.xmax;
+	
+	this.moveTo=function(x,y)
+	{
+		this.x=Math.max(this.xmin,Math.min(x,this.xmax));
+		this.y=Math.max(this.ymin,Math.min(y,this.ymax));
+	}
+	
+	
+	this.getX=function()
+	{
+		return this.x-this.xmin;
+	}
+
+	this.getY=function()
+	{
+		return this.y-this.ymin;
+	}
+		
+}

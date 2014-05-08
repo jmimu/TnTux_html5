@@ -41,8 +41,11 @@ function Level(jsonfile)
 	
 	this.loadfile();
 	
-	this.draw=function(scrollX,scrollY)
+	this.draw=function(camera)
 	{
+		var scrollX=-camera.getX();
+		var scrollY=-camera.getY();
+		
 		if (scrollX>0) scrollX=0;
 		if (scrollY>0) scrollY=0;
 		var drawW=Math.floor(CANVAS_WIDTH/this.tileSize[0])+1;
