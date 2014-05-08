@@ -1,5 +1,3 @@
-
-
 //animation class
 function Anim(name,pos,src,size)
 {
@@ -9,7 +7,8 @@ function Anim(name,pos,src,size)
 	
 	this.size=size;//size of one frame
 	this.len=0;//animaton duration in frames
-	this.vertical=false;//is the animation in a vertical strip?
+	this.nbL=0;//number of lines of frames in img
+	this.nbC=0;//number of columns of frames in img
 	this.img=new Image();
 	
 	window.dataManager.onNewToLoad();
@@ -23,12 +22,9 @@ function Anim(name,pos,src,size)
 			{
 				dataError("Error on size of "+this.src);
 			}
-			obj.len=Math.floor(this.width/obj.size[0])//animation length
-			if (obj.len<2)
-			{
-				obj.vertical=true;
-				obj.len=Math.floor(this.height/obj.size[1])//animation length
-			}
+			obj.nbL=Math.floor(this.height/obj.size[1]);
+			obj.nbC=Math.floor(this.width/obj.size[0]);
+			obj.len=obj.nbL*obj.nbC;//we suppose the img is full of frames!
 			window.dataManager.onNewLoaded(this.src);
 		}
 	};
@@ -89,12 +85,13 @@ function Sprite(x,y,pos,dir)
 	{
 		if ((this.pos in window.dataManager.anims)&&(this.dir in window.dataManager.anims[this.pos]))
 		{
-			if (window.dataManager.anims[this.pos][this.dir].vertical)
-				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,0,Math.floor(this.frame)*this.h,
-					this.w,this.h,this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
-			else
-				canvas.drawImage(window.dataManager.anims[this.pos][this.dir].img,Math.floor(this.frame)*this.w,0,
-					this.w,this.h,this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
+			var anim=window.dataManager.anims[this.pos][this.dir];
+			var frameXimg=((Math.floor(this.frame))%anim.nbC)*anim.size[0];
+			var frameYimg=(Math.floor((Math.floor(this.frame)/anim.nbC)))*anim.size[1];
+			
+			canvas.drawImage(anim.img,frameXimg,frameYimg,
+					anim.size[0],anim.size[1],
+					this.x-this.w/2-camera.getX(),this.y-this.h/2-camera.getY(),this.w,this.h);
 		}else{
 			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
 		}

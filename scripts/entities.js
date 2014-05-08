@@ -6,7 +6,7 @@ function Ball()
 	this.vx=2;
 	this.vy=2;
 	
-	this.update=function(player)
+	this.update=function(player,level)
 	{
 		if ((this.x<0)||(this.x>=CANVAS_WIDTH))
 			this.vx*=-1;
@@ -14,6 +14,11 @@ function Ball()
 			this.vy*=-1;
 		this.x+=this.vx;
 		this.y+=this.vy;
+		
+		if (level.collide(this.x,this.y)=="bloc")
+		{
+			this.vx*=-1;this.vy*=-1;
+		}
 		
 		if ((Math.abs(this.x-player.x)<=(this.w/2+player.w/2))&&
 			(Math.abs(this.y-player.y)<=(this.h/2+player.h/2)))

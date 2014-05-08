@@ -6,7 +6,7 @@ $(document).ready(function() //or $(function()
 	}
 );
 
-var gameUpdate;
+var gameUpdate;//record setInterval to be able to stop it TODO: move it to canvasJM.js?
 
 
 
@@ -31,14 +31,15 @@ startGame=function()
 	
 	var ball=new Ball();
 	var player=new Player();
-	var camera=new Camera(window.dataManager.level);
+	var level=window.dataManager.level;
+	var camera=new Camera(level);
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		player.update();
-		ball.update(player);
+		ball.update(player,level);
 		camera.moveTo(ball.x,ball.y);
-		window.dataManager.level.draw(camera);
+		level.draw(camera);
 		ball.draw(camera);
 		player.draw(camera);
 		//window.requestAnimFrame(update);

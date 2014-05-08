@@ -3,8 +3,12 @@ function Level(jsonfile)
 	this.jsonfile=jsonfile;
 	console.log("create level "+jsonfile);
 	this.mapSize=[];//[sx,sy]
-	this.map=[];//int array
-	this.tiles=0;//Anim	
+	this.mainMap=[];//int array
+	this.metaMap=[];//int array
+	this.tiles=0;//Anim
+	this.metaTilesSens=["bloc","hurt","slip","die"];//must be in the same order as meta tiles picture
+	this.firstMainTileIndex=0;
+	this.firstMetaTileIndex=0;
 	this.tileSize=[];//[sx,sy]
 	
 	//make a closure to read the json file
@@ -25,14 +29,24 @@ function Level(jsonfile)
 			//read tilesets
 			$.each(data["tilesets"], function( index_tileset, value_tileset ) {
 					console.log("Level: found tileset "+value_tileset["name"]);
-					obj.tiles=new Anim("main_tiles",0,"data/"+value_tileset["image"],obj.tileSize);
+					if (value_tileset["name"]=="main")
+					{
+						obj.tiles=new Anim("main_tiles",0,"data/"+value_tileset["image"],obj.tileSize);
+						obj.firstMainTileIndex=value_tileset["firstgid"];
+					}
+					if (value_tileset["name"]=="meta")
+					{
+						obj.firstMetaTileIndex=value_tileset["firstgid"];
+					}					
 				});
 
 			//read layers
 			$.each(data["layers"], function( index_layer, value_layer ) {
 					console.log("Level: found layer "+value_layer["name"]);
-					if ((value_layer["type"]=="tilelayer")&&(value_layer["visible"]==true)&&(value_layer["name"]=="main"))
-						obj.map=value_layer["data"];
+					if ((value_layer["type"]=="tilelayer")&&(value_layer["name"]=="main"))
+						obj.mainMap=value_layer["data"];
+					if ((value_layer["type"]=="tilelayer")&&(value_layer["name"]=="meta"))
+						obj.metaMap=value_layer["data"];
 				});
 
 			window.dataManager.onNewLoaded(obj.jsonfile);
@@ -60,14 +74,21 @@ function Level(jsonfile)
 		
 		var canvasX=scrollX;
 		var canvasY=scrollY;
+		var frameXimg;//where the tile is on tile sheet
+		var frameYimg;
 		
 		for (var y=drawY;y<drawY+drawH;y++)
 		{			
 			for (var x=drawX;x<drawX+drawW;x++)
 			{
 				if ((0<=x)&&(x<this.mapSize[0])&&(0<=y)&&(y<this.mapSize[1]))
-					canvas.drawImage(this.tiles.img,(this.map[i]-1)*this.tileSize[0],0,
+				{
+					frameXimg=((this.mainMap[i]-this.firstMainTileIndex)%this.tiles.nbC)*this.tiles.size[0];
+					frameYimg=(Math.floor((this.mainMap[i]-1)/this.tiles.nbC))*this.tiles.size[1];
+
+					canvas.drawImage(this.tiles.img,frameXimg,frameYimg,
 						this.tileSize[0],this.tileSize[1],canvasX,canvasY,this.tileSize[0],this.tileSize[1]);
+				}
 				
 				canvasX+=this.tileSize[0];
 				i+=1;
@@ -78,4 +99,12 @@ function Level(jsonfile)
 		}
 	}
 	
+	this.collide=function(x,y)
+	{
+		var index=Math.floor(x/this.tileSize[0])+Math.floor(y/this.tileSize[1])*this.mapSize[0];
+		if (this.metaMap[index]<this.firstMetaTileIndex)
+			return ""; //no collision
+		else
+			return this.metaTilesSens[this.metaMap[index]-this.firstMetaTileIndex];
+	}
 }
