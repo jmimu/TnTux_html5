@@ -3,30 +3,68 @@
 	{
 		"tux_walk" :
 		{
-			"1" : "data/walk_side_1.png",
-			"2" : "data/walk_side_2.png",
-			"3" : "data/walk_up_1.png",
-			"4" : "data/walk_down_1.png",
+			"1" :
+			{
+				"src":"data/walk_side_1.png",
+				"box":[[8,32],[39,63]]
+			},
+			"2" :
+			{
+				"src":"data/walk_side_2.png",
+				"box":[[8,32],[39,63]]
+			},
+			"3" :
+			{
+				"src":"data/walk_up_1.png",
+				"box":[[8,32],[39,63]]
+			},
+			"4" :
+			{
+				"src":"data/walk_down_1.png",
+				"box":[[8,32],[39,63]]
+			},
 			"size" : [48,64]
 		},
 		"tux_turn" :
 		{
-			"1" : "data/hz_turn_1.png",
-			"2" : "data/hz_turn_2.png",
-			"3" : "data/vert_turn_1.png",
-			"4" : "data/vert_turn_2.png",
+			"1" :
+			{
+				"src":"data/hz_turn_1.png",
+				"box":[[8,32],[39,63]]
+			},
+			"2" :
+			{
+				"src":"data/hz_turn_2.png",
+				"box":[[8,32],[39,63]]
+			},
+			"3" :
+			{
+				"src":"data/vert_turn_1.png",
+				"box":[[8,32],[39,63]]
+			},
+			"4" :
+			{
+				"src":"data/vert_turn_2.png",
+				"box":[[8,32],[39,63]]
+			},
 			"size" : [48,64]
 		},
 		"ball_roll" :
 		{
-			"1" : "data/ball_roll1_1.png",
-			"2" : "data/ball_roll1_2.png",
+			"1" :
+			{
+				"src":"data/ball_roll1_1.png",
+				"box":[[0,0],[31,31]]
+			},
 			"size" : [32,32]
 		},
 		"ball_explode" :
 		{
-			"1" : "data/ball_expl_1.png",
-			"2" : "data/ball_expl_2.png",
+			"1" :
+			{
+				"src":"data/ball_expl_1.png",
+				"box":[[0,0],[31,31]]
+			},
 			"size" : [32,32]
 		}
 	},

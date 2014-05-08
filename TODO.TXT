@@ -1,0 +1,15 @@
+relief de la carte : on dessine d'autres couches un peu decalees vers le haut !
+ 
+
+Faire passages :
+ - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)
+ - boxxle : ranger des caisses sur des interrupteurs
+ - parodius : glissade hz avec obstacles a eviter
+ - metal gear : infiltration
+ - zelda 1 : debut avec grotte
+
+Peut pas mourir : si il tombe dans un trou on le voit revenir par ailleurs (debut de la salle)
+
+recuperer des poissons et les mettre dans sa besace, le amene dans une fabrique qui fait des conserves
+avec et pour les pinguins
+

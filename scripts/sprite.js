@@ -1,11 +1,12 @@
 //animation class
-function Anim(name,pos,src,size)
+function Anim(name,pos,src,size,hitbox)
 {
 	console.log("create anim "+name+" pos "+pos+", src="+src);
 	this.name=name;
 	this.pos=pos;
 	
 	this.size=size;//size of one frame
+	this.hitbox=hitbox;//array of 2 array : xy of upper left corner and lower right corner
 	this.len=0;//animaton duration in frames
 	this.nbL=0;//number of lines of frames in img
 	this.nbC=0;//number of columns of frames in img
@@ -39,10 +40,15 @@ function Sprite(x,y,pos,dir)
 	this.pos="?";//current animation
 	this.dir=0;//current direction
 	this.frame=0;//where we are in the animation
+	
+	//drawing part
 	this.w=-1;//size of current picture
 	this.h=-1;//size of current picture	
 	this.x=x;
 	this.y=y;
+	
+	//collision part: we suppose the sprite is at zoom=1, hit box is Anim's
+	
 	this.loopedOnce=false;//to know if one loop of animation is finished
 	this.callback=0;//call this function at the end of the animation
 	
@@ -99,47 +105,48 @@ function Sprite(x,y,pos,dir)
 	
 	this.testCollideLevel=function(level,vx,vy)
 	{
+		var anim=window.dataManager.anims[this.pos][this.dir];
 		if (vx>0)//go right
 		{
-			var collide=level.collideVert(this.x+this.w-1+vx,this.y,this.y+this.h-1);
+			var collide=level.collideVert(this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
 			//console.log("collide:"+collide);
 			if ($.inArray("bloc",collide)>-1) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+this.w+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.w);
+				vx=(Math.floor((this.x+anim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+anim.hitbox[1][0]+1);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vx<0)//go left
 		{
-			var collide=level.collideVert(this.x+vx,this.y,this.y+this.h-1);
+			var collide=level.collideVert(this.x+anim.hitbox[0][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
 			//console.log("collide:"+collide);
 			if ($.inArray("bloc",collide)>-1) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x);
+				vx=(Math.floor((this.x+anim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+anim.hitbox[0][0]);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vy>0)//go down
 		{
-			var collide=level.collideHz(this.x,this.x+this.w-1,this.y+this.h-1+vy);
+			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("bloc",collide)>-1) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+this.h+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.h);
+				vy=(Math.floor((this.y+anim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+anim.hitbox[1][1]+1);
 				//console.log("vy "+vy);
 			}
 		}
 		if (vy<0)//go up
 		{
-			var collide=level.collideHz(this.x,this.x+this.w-1,this.y+vy);
+			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("bloc",collide)>-1) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y);
+				vy=(Math.floor((this.y+anim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+anim.hitbox[0][1]);
 				//console.log("vy "+vy);
 			}
 		}		
