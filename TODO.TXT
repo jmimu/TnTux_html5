@@ -1,5 +1,7 @@
 relief de la carte : on dessine d'autres couches un peu decalees vers le haut !
- 
+On fait une liste de tous les sprites a afficher, on l'ordonne en y decroissants
+et on dessine un ligne de la carte, puis les sprites qui correspondent, etc.
+
 
 Faire passages :
  - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)

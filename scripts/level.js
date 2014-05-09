@@ -55,8 +55,15 @@ function Level(jsonfile)
 	
 	this.loadfile();
 	
-	this.draw=function(camera)
+	//draw in several layers to have correct supperpositions
+	//uses a list of hz sprites (right on the floor, no precise order)
+	//and vertical sprites that have to be drawn in correct order
+	this.draw=function(camera,hzSprites,vertSprites)
 	{
+		//order vert sprite from top to bottom
+		vertSprites.sort(spriteSortFunction);
+
+		
 		var scrollX=-camera.getX();
 		var scrollY=-camera.getY();
 		
@@ -66,38 +73,75 @@ function Level(jsonfile)
 		var drawH=Math.floor(CANVAS_HEIGHT/this.tileSize[1])+1;
 		var drawX=Math.floor(-scrollX/this.tileSize[0]);
 		var drawY=Math.floor(-scrollY/this.tileSize[1]);
-		var i=drawX+this.mapSize[0]*drawY;//index of current tile
+		var i;//index of current tile
 		
 		//scroll value, between 0 and tileSize-1
 		scrollX=scrollX%this.tileSize[0];
 		scrollY=scrollY%this.tileSize[1];
 		
-		var canvasX=scrollX;
-		var canvasY=scrollY;
+		var canvasX;
+		var canvasY;
 		var frameXimg;//where the tile is on tile sheet
 		var frameYimg;
 		
-		for (var y=drawY;y<drawY+drawH;y++)
-		{			
-			for (var x=drawX;x<drawX+drawW;x++)
-			{
-				if ((0<=x)&&(x<this.mapSize[0])&&(0<=y)&&(y<this.mapSize[1]))
-				{
-					frameXimg=((this.mainMap[i]-this.firstMainTileIndex)%this.tiles.nbC)*this.tiles.size[0];
-					frameYimg=(Math.floor((this.mainMap[i]-1)/this.tiles.nbC))*this.tiles.size[1];
-
-					canvas.drawImage(this.tiles.img,frameXimg,frameYimg,
-						this.tileSize[0],this.tileSize[1],canvasX,canvasY,this.tileSize[0],this.tileSize[1]);
-				}
-				
-				canvasX+=this.tileSize[0];
-				i+=1;
-			}
-			i+=(this.mapSize[0]-drawW);
+		var nextSpriteToDraw=0;//index of the next sprite to draw
+		
+		for (var height=0;height<2;height++)//0:floor, 1:top
+		{
 			canvasX=scrollX;
-			canvasY+=this.tileSize[0];
+			canvasY=scrollY;
+			i=drawX+this.mapSize[0]*drawY;//index of current tile
+			for (var y=drawY;y<drawY+drawH;y++)
+			{
+				if (height==1)//draw vertSprites on second pass
+				{
+					while ((nextSpriteToDraw<vertSprites.length)
+						&& (vertSprites[nextSpriteToDraw].y+vertSprites[nextSpriteToDraw].h-camera.getY()<=canvasY+this.tileSize[1]))
+					{
+						vertSprites[nextSpriteToDraw].draw(camera);
+						nextSpriteToDraw++;
+					}
+					
+					
+				}
+						
+				for (var x=drawX;x<drawX+drawW;x++)
+				{
+					if ((this.metaMap[i]>0)||(height==0))
+					{
+						if ((0<=x)&&(x<this.mapSize[0])&&(0<=y)&&(y<this.mapSize[1]))
+						{					
+							frameXimg=((this.mainMap[i]-this.firstMainTileIndex)%this.tiles.nbC)*this.tiles.size[0];
+							frameYimg=(Math.floor((this.mainMap[i]-1)/this.tiles.nbC))*this.tiles.size[1];
+
+							if (height==0)//floor
+								canvas.drawImage(this.tiles.img,frameXimg,frameYimg,
+									this.tileSize[0],this.tileSize[1],canvasX,canvasY,this.tileSize[0],this.tileSize[1]);
+							else//high parts (only if metaMap[i]>0)
+								canvas.drawImage(this.tiles.img,frameXimg,frameYimg,
+									this.tileSize[0],this.tileSize[1],canvasX,canvasY-this.tileSize[1]/2,this.tileSize[0],this.tileSize[1]);
+						}
+					}
+					
+					canvasX+=this.tileSize[0];
+					i+=1;
+				}
+				i+=(this.mapSize[0]-drawW);
+				canvasX=scrollX;
+				canvasY+=this.tileSize[0];
+			}
+			
+			if (height==0)//draw hz sprites
+				$.each(hzSprites, function( i, v ) {v.draw(camera);});
+		}
+		//draw the remaining sprites..
+		while (nextSpriteToDraw<vertSprites.length)			
+		{
+			//vertSprites[nextSpriteToDraw].draw(camera);
+			nextSpriteToDraw++;
 		}
 	}
+	
 	
 	this.collide=function(x,y)
 	{

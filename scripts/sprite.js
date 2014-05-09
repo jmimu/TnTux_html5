@@ -34,6 +34,17 @@ function Anim(name,pos,src,size,hitbox)
 	this.img.src=src;
 }
 
+
+//sort sprite to get drawing order = compare bottom of the sprite
+function spriteSortFunction(s1, s2){
+	if (s1.y+s1.h>s2.y+s2.h)
+		return 1
+	else if (s1.y+s1.h<s2.y+s2.h)
+		return -1
+	else return 0;
+}
+
+
 //sprite class
 function Sprite(x,y,pos,dir)
 {
@@ -46,6 +57,7 @@ function Sprite(x,y,pos,dir)
 	this.h=-1;//size of current picture	
 	this.x=x;
 	this.y=y;
+	this.z=0;//for later...
 	
 	//collision part: we suppose the sprite is at zoom=1, hit box is Anim's
 	

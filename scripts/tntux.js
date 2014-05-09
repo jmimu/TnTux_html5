@@ -34,14 +34,23 @@ startGame=function()
 	var level=window.dataManager.level;
 	var camera=new Camera(level);
 	
+	//lists of sprites for ordered drawing
+	var hzSprites=[];//for sprites with height=0 (flat)
+	var vertSprites=[];//sprite with an important drawing order
+	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+		
 		player.update(level);
 		ball.update(player,level);
 		camera.moveTo(player.x,player.y);
-		level.draw(camera);
-		ball.draw(camera);
-		player.draw(camera);
+		
+		vertSprites=[player,ball];
+		
+		level.draw(camera,hzSprites,vertSprites);
+		//ball.draw(camera);
+		//player.draw(camera);
+		//level.draw(camera,1);
 		//window.requestAnimFrame(update);
 	})();
 	

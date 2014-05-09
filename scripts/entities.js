@@ -2,13 +2,13 @@
 //ball class, inherits Sprite
 function Ball()
 {
-    Sprite.call(this,200,100,"ball_roll",1);// Parent constructor
-	this.vx=2;
-	this.vy=2;
+    Sprite.call(this,200,100,"tux_walk",4);// Parent constructor
+	this.vx=0;
+	this.vy=0;
 	
 	this.update=function(player,level)
 	{
-		if ((this.x<0)||(this.x>=CANVAS_WIDTH-this.w))
+		/*if ((this.x<0)||(this.x>=CANVAS_WIDTH-this.w))
 			this.vx*=-1;
 		if ((this.y<0)||(this.y>=CANVAS_HEIGHT-this.h))
 			this.vy*=-1;
@@ -28,7 +28,7 @@ function Ball()
 		{
 			this.setPos("ball_explode",1,this.endOfExplosion);
 			this.vx*=-1;
-		}
+		}*/
 		this.animate(0.2);
 	}
 	
@@ -48,10 +48,10 @@ function Player()
 	{
 		var vx=0;
 		var vy=0;
-		if (window.keydown["up"]) {vy=-2;}
-		if (window.keydown["down"]) {vy=2;}
-		if (window.keydown["left"]) {vx=-2;}
-		if (window.keydown["right"]) {vx=2;}
+		if (window.keydown["up"]) {vy=-4;}
+		if (window.keydown["down"]) {vy=4;}
+		if (window.keydown["left"]) {vx=-4;}
+		if (window.keydown["right"]) {vx=4;}
 
 		var depl=this.testCollideLevel(level,vx,vy);
 		
