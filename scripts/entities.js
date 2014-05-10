@@ -15,10 +15,10 @@ function Ball()
 		this.x+=this.vx;
 		this.y+=this.vy;
 		
-		if ((level.collide(this.x,this.y)=="bloc")||
-			(level.collide(this.x+this.w-1,this.y)=="bloc")||
-			(level.collide(this.x+this.w-1,this.y+this.h-1)=="bloc")||
-			(level.collide(this.x,this.y+this.h-1)=="bloc"))
+		if ((level.collide(this.x,this.y)=="wall")||
+			(level.collide(this.x+this.w-1,this.y)=="wall")||
+			(level.collide(this.x+this.w-1,this.y+this.h-1)=="wall")||
+			(level.collide(this.x,this.y+this.h-1)=="wall"))
 		{
 			this.vx*=-1;this.vy*=-1;
 		}
@@ -32,12 +32,30 @@ function Ball()
 		this.animate(0.2);
 	}
 	
-	this.endOfExplosion=function()
+	/*this.endOfExplosion=function()
 	{
 		this.setPos("ball_roll",1);
-	}
+	}*/
 }
 //Ball.prototype = Object.create(Sprite.prototype);// Inheritance
+
+
+
+//box class, inherits Sprite
+function Box()
+{
+    Sprite.call(this,32*12,32*6,"box",1);// Parent constructor
+	this.targetX=this.x+32;
+	this.targetY=this.y;
+    this.update=function()
+	{
+		if (this.x<this.targetX) this.x++;
+		if (this.x>this.targetX) this.x--;
+		if (this.y<this.targetY) this.y++;
+		if (this.y>this.targetY) this.y--;
+	}
+}
+
 
 //player class, inherits Sprite
 function Player()
@@ -54,33 +72,53 @@ function Player()
 		if (window.keydown["right"]) {vx=4;}
 
 		var depl=this.testCollideLevel(level,vx,vy);
+		var push_direction=0;
+		if ((vx<0)&&(depl[0]==0)&&(vy==0)) push_direction=1;
+		if ((vx>0)&&(depl[0]==0)&&(vy==0)) push_direction=2;
+		if ((vy<0)&&(depl[1]==0)&&(vx==0)) push_direction=3;
+		if ((vy>0)&&(depl[1]==0)&&(vx==0)) push_direction=4;
 		
 		this.x+=depl[0];
 		this.y+=depl[1];
 
+		if ((push_direction!=0)&&((this.pos!="tux_push")||(this.dir!=push_direction)))
+			this.setPos("tux_push",push_direction);
+
 		if (window.keydown["up"])
 		{
 			this.animate(0.3);
-			if (this.dir==4) this.setPos("tux_turn",3,this.endOfTurn);
-			else if (this.dir!=3) this.setPos("tux_walk",3);
+			if (push_direction==0)
+			{
+				if (this.dir==4) this.setPos("tux_turn",3,this.endOfTurn);
+				else if (this.dir!=3) this.setPos("tux_walk",3);
+			}
 		}
 		else if (window.keydown["down"])
 		{
 			this.animate(0.3);
-			if (this.dir==3) this.setPos("tux_turn",4,this.endOfTurn);
-			else if (this.dir!=4) this.setPos("tux_walk",4);
+			if (push_direction==0)
+			{
+				if (this.dir==3) this.setPos("tux_turn",4,this.endOfTurn);
+				else if (this.dir!=4) this.setPos("tux_walk",4);
+			}
 		}
 		else if (window.keydown["left"])
 		{
 			this.animate(0.3);
-			if (this.dir==2) this.setPos("tux_turn",1,this.endOfTurn);
-			else if (this.dir!=1) this.setPos("tux_walk",1);
+			if (push_direction==0)
+			{
+				if (this.dir==2) this.setPos("tux_turn",1,this.endOfTurn);
+				else if (this.dir!=1) this.setPos("tux_walk",1);
+			}
 		}
 		else if (window.keydown["right"])
 		{
 			this.animate(0.3);
-			if (this.dir==1) this.setPos("tux_turn",2,this.endOfTurn);
-			else if (this.dir!=2) this.setPos("tux_walk",2);
+			if (push_direction==0)
+			{
+				if (this.dir==1) this.setPos("tux_turn",2,this.endOfTurn);
+				else if (this.dir!=2) this.setPos("tux_walk",2);
+			}
 		}
 
 		

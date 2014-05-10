@@ -6,7 +6,8 @@ function Level(jsonfile)
 	this.mainMap=[];//int array
 	this.metaMap=[];//int array
 	this.tiles=0;//Anim
-	this.metaTilesSens=["bloc","hurt","slip","die"];//must be in the same order as meta tiles picture
+	//s1-s5: special tiles that will be limked to a specific function in LevelN class
+	this.metaTilesSens=["wall","hurt","slip","die","begin","end","break","autoL","autoR","autoU","autoD","s1","s2","s3","s4","s5"];//must be in the same order as meta tiles picture
 	this.firstMainTileIndex=0;
 	this.firstMetaTileIndex=0;
 	this.tileSize=[];//[sx,sy]

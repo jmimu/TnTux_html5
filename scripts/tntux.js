@@ -30,6 +30,7 @@ startGame=function()
 	});
 	
 	var ball=new Ball();
+	var box=new Box();
 	var player=new Player();
 	var level=window.dataManager.level;
 	var camera=new Camera(level);
@@ -43,9 +44,10 @@ startGame=function()
 		
 		player.update(level);
 		ball.update(player,level);
+		box.update();
 		camera.moveTo(player.x,player.y);
 		
-		vertSprites=[player,ball];
+		vertSprites=[player,ball,box];
 		
 		level.draw(camera,hzSprites,vertSprites);
 		//ball.draw(camera);

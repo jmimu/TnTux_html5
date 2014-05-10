@@ -49,7 +49,7 @@ function spriteSortFunction(s1, s2){
 function Sprite(x,y,pos,dir)
 {
 	this.pos="?";//current animation
-	this.dir=0;//current direction
+	this.dir=0;//current direction 1:left, 2:right, 3:up, 4:down
 	this.frame=0;//where we are in the animation
 	
 	//drawing part
@@ -122,7 +122,7 @@ function Sprite(x,y,pos,dir)
 		{
 			var collide=level.collideVert(this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
 			//console.log("collide:"+collide);
-			if ($.inArray("bloc",collide)>-1) //round to next tile
+			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+anim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+anim.hitbox[1][0]+1);
@@ -133,7 +133,7 @@ function Sprite(x,y,pos,dir)
 		{
 			var collide=level.collideVert(this.x+anim.hitbox[0][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
 			//console.log("collide:"+collide);
-			if ($.inArray("bloc",collide)>-1) //round to next tile
+			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+anim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+anim.hitbox[0][0]);
@@ -144,7 +144,7 @@ function Sprite(x,y,pos,dir)
 		{
 			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("bloc",collide)>-1) //round to next tile
+			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+anim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+anim.hitbox[1][1]+1);
@@ -155,13 +155,15 @@ function Sprite(x,y,pos,dir)
 		{
 			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("bloc",collide)>-1) //round to next tile
+			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+anim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+anim.hitbox[0][1]);
 				//console.log("vy "+vy);
 			}
-		}		
+		}
+		
+		//TODO: add the 4 diagonals?
 		return [vx,vy];
 	}
 }
