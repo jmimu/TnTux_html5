@@ -46,7 +46,7 @@ function spriteSortFunction(s1, s2){
 
 
 //sprite class
-function Sprite(x,y,pos,dir)
+function Sprite(x,y,pos,dir,hz)
 {
 	this.pos="?";//current animation
 	this.dir=0;//current direction 1:left, 2:right, 3:up, 4:down
@@ -58,6 +58,8 @@ function Sprite(x,y,pos,dir)
 	this.x=x;
 	this.y=y;
 	this.z=0;//for later...
+	this.isHz=hz;//is the sprite flat and horizontal?
+	this.toDelete=false;//this sprite has to be destroyed on next frame
 	
 	//collision part: we suppose the sprite is at zoom=1, hit box is Anim's
 	
@@ -74,7 +76,7 @@ function Sprite(x,y,pos,dir)
 		this.callback=callback;
 		if (this.pos in window.dataManager.anims)
 		{
-			console.log("pos set to  "+newpos);
+			//console.log("pos set to  "+newpos);
 			this.w=window.dataManager.anims[this.pos][this.dir].size[0];
 			this.h=window.dataManager.anims[this.pos][this.dir].size[1];
 			this.loopedOnce=false;
@@ -113,6 +115,14 @@ function Sprite(x,y,pos,dir)
 		}else{
 			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
 		}
+	}
+	
+	this.testCollideSprite=function(s)
+	{
+		var anim1=window.dataManager.anims[this.pos][this.dir];
+		var anim2=window.dataManager.anims[s.pos][s.dir];
+		return (((this.x+anim1.hitbox[1][0] >= s.x+anim2.hitbox[0][0])&&(this.x+anim1.hitbox[0][0] <= s.x+anim2.hitbox[1][0]))
+			&&((this.y+anim1.hitbox[1][1] >= s.y+anim2.hitbox[0][1])&&(this.y+anim1.hitbox[0][1] <= s.y+anim2.hitbox[1][1])));
 	}
 	
 	this.testCollideLevel=function(level,vx,vy)

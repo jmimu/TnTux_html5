@@ -12,7 +12,7 @@ var gameUpdate;//record setInterval to be able to stop it TODO: move it to canva
 
 startGame=function()
 {
-	console.log("Start game");
+	console.log("Start game");	
 	
 	//taken from http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
 	window.keydown = {};
@@ -29,27 +29,22 @@ startGame=function()
 		window.keydown[keyName(event)] = false;
 	});
 	
-	var ball=new Ball();
-	var box=new Box();
 	var player=new Player();
 	var level=window.dataManager.level;
 	var camera=new Camera(level);
 	
-	//lists of sprites for ordered drawing
-	var hzSprites=[];//for sprites with height=0 (flat)
-	var vertSprites=[];//sprite with an important drawing order
+	//list of sprites
+	var allSprites=[player];
+	allSprites.push(new Ball());
+	allSprites.push(new Box());
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		
-		player.update(level);
-		ball.update(player,level);
-		box.update();
+		$.each(allSprites, function( i, v ){v.update(level,allSprites);if (v.toDelete)allSprites.splice(i,1);});
 		camera.moveTo(player.x,player.y);
 		
-		vertSprites=[player,ball,box];
-		
-		level.draw(camera,hzSprites,vertSprites);
+		level.draw(camera,allSprites);
 		//ball.draw(camera);
 		//player.draw(camera);
 		//level.draw(camera,1);

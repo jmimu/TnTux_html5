@@ -6,7 +6,7 @@ function Ball()
 	this.vx=0;
 	this.vy=0;
 	
-	this.update=function(player,level)
+	this.update=function(level,allSprites)
 	{
 		/*if ((this.x<0)||(this.x>=CANVAS_WIDTH-this.w))
 			this.vx*=-1;
@@ -44,15 +44,27 @@ function Ball()
 //box class, inherits Sprite
 function Box()
 {
-    Sprite.call(this,32*12,32*6,"box",1);// Parent constructor
+    Sprite.call(this,32*12,32*5.5,"box",1);// Parent constructor
 	this.targetX=this.x+32;
 	this.targetY=this.y;
-    this.update=function()
+    this.update=function(level,allSprites)
 	{
+		//the box can be moved only if stopped
+		if ((this.x==this.targetX)&&(this.y==this.targetY))
+		{
+			(function(obj)//need a closure!
+			{
+				$.each(allSprites, function( i, v ){if ((v!=obj)&&(obj.testCollideSprite(v))) {console.log("Boom!");obj.targetX+=32;}});
+			})(this);
+		}
+
+		//go to target pos
 		if (this.x<this.targetX) this.x++;
 		if (this.x>this.targetX) this.x--;
 		if (this.y<this.targetY) this.y++;
 		if (this.y>this.targetY) this.y--;
+		//$.each(allSprites, function( i, v ){if ((v!=this)&&(this.testCollideSprite(v))) {console.log("Boom!");this.toDelete=true;}});
+		
 	}
 }
 
@@ -62,7 +74,7 @@ function Player()
 {
 	Sprite.call(this,100,60,"tux_walk",1);// Parent constructor
 
-	this.update=function(level)
+	this.update=function(level,allSprites)
 	{
 		var vx=0;
 		var vy=0;

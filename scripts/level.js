@@ -59,8 +59,18 @@ function Level(jsonfile)
 	//draw in several layers to have correct supperpositions
 	//uses a list of hz sprites (right on the floor, no precise order)
 	//and vertical sprites that have to be drawn in correct order
-	this.draw=function(camera,hzSprites,vertSprites)
+	this.draw=function(camera,allSprites)
 	{
+		var hzSprites=[];
+		var vertSprites=[];
+		
+		$.each(allSprites, function( i, v )
+		{
+			if (v.isHz)
+				hzSprites.push(v);
+			else
+				vertSprites.push(v);
+		});
 		//order vert sprite from top to bottom
 		vertSprites.sort(spriteSortFunction);
 
