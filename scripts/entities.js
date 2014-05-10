@@ -2,7 +2,7 @@
 //ball class, inherits Sprite
 function Ball()
 {
-    Sprite.call(this,200,100,"tux_walk",4);// Parent constructor
+    Sprite.call(this,"Ball",200,100,"tux_walk",4);// Parent constructor
 	this.vx=0;
 	this.vy=0;
 	
@@ -44,19 +44,19 @@ function Ball()
 //box class, inherits Sprite
 function Box()
 {
-    Sprite.call(this,32*12,32*5.5,"box",1);// Parent constructor
+    Sprite.call(this,"Box",32*12,32*5.5,"box",1);// Parent constructor
 	this.targetX=this.x+32;
 	this.targetY=this.y;
     this.update=function(level,allSprites)
 	{
-		//the box can be moved only if stopped
+		/*//the box can be moved only if stopped
 		if ((this.x==this.targetX)&&(this.y==this.targetY))
 		{
 			(function(obj)//need a closure!
 			{
 				$.each(allSprites, function( i, v ){if ((v!=obj)&&(obj.testCollideSprite(v))) {console.log("Boom!");obj.targetX+=32;}});
 			})(this);
-		}
+		}*/
 
 		//go to target pos
 		if (this.x<this.targetX) this.x++;
@@ -72,7 +72,7 @@ function Box()
 //player class, inherits Sprite
 function Player()
 {
-	Sprite.call(this,100,60,"tux_walk",1);// Parent constructor
+	Sprite.call(this,"Player",100,60,"tux_walk",1);// Parent constructor
 
 	this.update=function(level,allSprites)
 	{
@@ -89,6 +89,16 @@ function Player()
 		if ((vx>0)&&(depl[0]==0)&&(vy==0)) push_direction=2;
 		if ((vy<0)&&(depl[1]==0)&&(vx==0)) push_direction=3;
 		if ((vy>0)&&(depl[1]==0)&&(vx==0)) push_direction=4;
+		
+		//test the interations with other sprites
+		(function(obj)//need a closure for $.each!
+		{
+			$.each(allSprites, function( i, v ){
+				if ((v!=obj)&&(obj.testCollideSprite(v)))
+					obj.onContact(v);
+			});
+		})(this);
+		
 		
 		this.x+=depl[0];
 		this.y+=depl[1];
@@ -140,8 +150,27 @@ function Player()
 		}
 	}
 	
+	//end of animation functions ---------------------
+	
 	this.endOfTurn=function()
 	{
 		this.setPos("tux_walk",this.dir);
+	}
+	
+	//when on contact with sprite s
+	this.onContact=function(s)
+	{
+		//act depending on its class
+		//console.log("Contact with a "+s.subClassName);
+		switch (s.subClassName){
+			case "Ball":
+				console.log("Do nothing...");
+				break;
+			case "Box":
+				console.log("Move the box");
+				break;
+			default :
+				console.log("Touched an unknown object...")
+		}
 	}
 }
