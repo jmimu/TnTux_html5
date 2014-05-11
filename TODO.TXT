@@ -1,5 +1,13 @@
-les collisions avec des series de boites ou de murs et boites ne marchent pas.
-il faudrait tout unifier, et/ou ordonner les collisions par nombre de pixels en commun.
+TODO
+* ajouter une couleur de fond et permettre des transparences dans les tiles ! (pour le relief)
+* mettre plutot les 4 tiles sur lesquelles sont les bords de la box en impassable, plutot que la target!
+
+On pourrait faire une map de choses impassables, avec les murs et les boites.
+Quand une boite est entre 2  cases on bloque les deux ?
+
+Et si une boite bouge et que quelqu'un est a sa place, comment on fait?
+Il faudrait avoir tous les mouvements de tout, et les contraintes et regler ca d'un coup ?
+
 
 Faire passages :
  - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)
@@ -14,3 +22,34 @@ Peut pas mourir : si il tombe dans un trou on le voit revenir par ailleurs (debu
 recuperer des poissons et les mettre dans sa besace, le amene dans une fabrique qui fait des conserves
 avec et pour les pinguins
 
+
+Pour faire l'equivalent de donnee membre protegee:
+function Foo()
+{
+    var secret=5;
+    this.getSecret=function()
+    {
+        return secret;
+    }
+    this.toto=function()
+    {
+        return 6;
+    }
+    this.toto2=function()
+    {
+        secret=this.toto();
+    }
+}
+
+function Bar()
+{
+    Foo.call(this);
+    this.toto=function()
+    {
+        return 7;
+    }
+}
+
+bar=new Bar();
+bar.toto2();
+alert(bar.getSecret())

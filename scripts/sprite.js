@@ -60,7 +60,14 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 	this.y=y;
 	this.z=0;//for later...
 	this.isHz=hz;//is the sprite flat and horizontal?
-	this.toDelete=false;//this sprite has to be destroyed on next frame
+	var toDelete=false;//this sprite has to be destroyed on next frame (private)
+	
+	this.isToDelete=function(){return toDelete;}//getter
+	//set lastActionsBeforeDelete for your subclass destructor
+	this.lastActionsBeforeDelete=function(){console.log("lastActionsBeforeDelete not set for "+this.subClassName);}
+	//setToDelete is a public function that can access to toDelete, and that has some customizable part through lastActionsBeforeDelete
+	this.setToDelete=function(){this.lastActionsBeforeDelete();toDelete=true;}
+	
 	
 	//collision part: we suppose the sprite is at zoom=1, hit box is Anim's
 	
@@ -124,9 +131,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 	{
 		if (vx>0)//go right
 		{
-			var collide=level.collideVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
+			var collide=level.isBlockingVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+this.currentAnim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.currentAnim.hitbox[1][0]+1);
@@ -135,9 +142,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vx<0)//go left
 		{
-			var collide=level.collideVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
+			var collide=level.isBlockingVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+this.currentAnim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+this.currentAnim.hitbox[0][0]);
@@ -146,9 +153,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vy>0)//go down
 		{
-			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[1][1]+vy);
+			var collide=level.isBlockingHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+this.currentAnim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.currentAnim.hitbox[1][1]+1);
@@ -157,9 +164,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vy<0)//go up
 		{
-			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[0][1]+vy);
+			var collide=level.isBlockingHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+this.currentAnim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+this.currentAnim.hitbox[0][1]);
@@ -170,9 +177,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		//then the 4 diagonals?
 		if (vx>0)//go right
 		{
-			var collide=level.collideVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
+			var collide=level.isBlockingVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+this.currentAnim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.currentAnim.hitbox[1][0]+1);
@@ -181,9 +188,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vx<0)//go left
 		{
-			var collide=level.collideVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
+			var collide=level.isBlockingVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
 				vx=(Math.floor((this.x+this.currentAnim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+this.currentAnim.hitbox[0][0]);
@@ -192,9 +199,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vy>0)//go down
 		{
-			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[1][1]+vy);
+			var collide=level.isBlockingHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+this.currentAnim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.currentAnim.hitbox[1][1]+1);
@@ -203,9 +210,9 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		}
 		if (vy<0)//go up
 		{
-			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy);
+			var collide=level.isBlockingHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
-			if ($.inArray("wall",collide)>-1) //round to next tile
+			if (collide) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
 				vy=(Math.floor((this.y+this.currentAnim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+this.currentAnim.hitbox[0][1]);

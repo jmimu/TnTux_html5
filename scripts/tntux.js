@@ -9,7 +9,6 @@ $(document).ready(function() //or $(function()
 var gameUpdate;//record setInterval to be able to stop it TODO: move it to canvasJM.js?
 
 
-
 startGame=function()
 {
 	console.log("Start game");	
@@ -36,18 +35,21 @@ startGame=function()
 	//list of sprites
 	var allSprites=[player];
 	allSprites.push(new Ball());
-	allSprites.push(new Box(9*32,4*32+16));
-	allSprites.push(new Box(9*32,5*32+16));
-	allSprites.push(new Box(9*32,6*32+16));
-	allSprites.push(new Box(8*32,5*32+16));
-	allSprites.push(new Box(8*32,6*32+16));
-	allSprites.push(new Box(11*32,8*32+16));
-	allSprites.push(new Box(10*32,8*32+16));
+	allSprites.push(new Box(9,5));
+	allSprites.push(new Box(9,6));
+	allSprites.push(new Box(9,5));
+	allSprites.push(new Box(8,6));
+	allSprites.push(new Box(8,7));
+	allSprites.push(new Box(11,8));
+	allSprites.push(new Box(10,8));
+	
+	var bobox=new Box(14,8);
+	bobox.setToDelete();
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		
-		$.each(allSprites, function( i, v ){v.update(level,allSprites);if (v.toDelete)allSprites.splice(i,1);});
+		$.each(allSprites, function( i, v ){v.update(level,allSprites);if (v.isToDelete()) allSprites.splice(i,1);});
 		camera.moveTo(player.x,player.y);
 		
 		level.draw(camera,allSprites);

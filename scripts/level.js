@@ -1,3 +1,5 @@
+window.level=0;//the game level, to be accessed everywhere
+
 function Level(jsonfile)
 {
 	this.jsonfile=jsonfile;
@@ -5,12 +7,26 @@ function Level(jsonfile)
 	this.mapSize=[];//[sx,sy]
 	this.mainMap=[];//int array
 	this.metaMap=[];//int array
+	this.blockingMap=[];//bool array (feeled with walls and all sprites obstacles)
 	this.tiles=0;//Anim
 	//s1-s5: special tiles that will be limked to a specific function in LevelN class
 	this.metaTilesSens=["wall","hurt","slip","die","begin","end","break","autoL","autoR","autoU","autoD","s1","s2","s3","s4","s5"];//must be in the same order as meta tiles picture
 	this.firstMainTileIndex=0;
 	this.firstMetaTileIndex=0;
 	this.tileSize=[];//[sx,sy]
+	
+	window.level=this;
+	
+	this.cl2i = function(c,l)//column, line to index in maps
+	{
+		return c+l*this.mapSize[0];
+	}
+	
+	this.xy2i = function(x,y)//x,y to index in maps
+	{
+		//console.log("Check tile "+Math.floor(x/this.tileSize[0])+" "+Math.floor(y/this.tileSize[1]));
+		return Math.floor(x/this.tileSize[0])+Math.floor(y/this.tileSize[1])*this.mapSize[0];
+	}
 	
 	//make a closure to read the json file
 	this.loadfile = function()
@@ -47,7 +63,23 @@ function Level(jsonfile)
 					if ((value_layer["type"]=="tilelayer")&&(value_layer["name"]=="main"))
 						obj.mainMap=value_layer["data"];
 					if ((value_layer["type"]=="tilelayer")&&(value_layer["name"]=="meta"))
+					{
 						obj.metaMap=value_layer["data"];
+						
+						//initialization of blockingMap
+						//obj.blockingMap=obj.metaMap.slice();//deep copy
+						obj.blockingMap=[];
+						console.log("Level: create blockingMap according to "+obj.firstMetaTileIndex);
+						for (var i=0;i<obj.metaMap.length;i++)
+						{
+							if (obj.metaMap[i]>=obj.firstMetaTileIndex)
+								obj.blockingMap.push(true);
+							else
+								obj.blockingMap.push(false);
+						}
+						
+
+					}
 				});
 
 			window.dataManager.onNewLoaded(obj.jsonfile);
@@ -153,8 +185,8 @@ function Level(jsonfile)
 		}
 	}
 	
-	
-	this.collide=function(x,y)
+	//returns a string containing the sens of the tile's meta
+	this.touching=function(x,y)
 	{
 		var index=Math.floor(x/this.tileSize[0])+Math.floor(y/this.tileSize[1])*this.mapSize[0];
 		if (this.metaMap[index]<this.firstMetaTileIndex)
@@ -162,8 +194,16 @@ function Level(jsonfile)
 		else
 			return this.metaTilesSens[this.metaMap[index]-this.firstMetaTileIndex];
 	}
+
+	//if collides with a wall
+	this.isBlocking=function(x,y)
+	{
+		var index=Math.floor(x/this.tileSize[0])+Math.floor(y/this.tileSize[1])*this.mapSize[0];
+		return this.blockingMap[index];
+	}
+
 	
-	this.collideHz=function(x1,x2,y)
+	this.isBlockingHz=function(x1,x2,y)
 	{
 		var x;
 		if (x1>x2)
@@ -173,17 +213,17 @@ function Level(jsonfile)
 			x1=x;
 		}
 		x=x1;
-		var output=[];
+		var output=false;
 		while (x<=x2)
 		{
-			output.push(this.collide(x,y));
+			output|=(this.isBlocking(x,y));
 			x+=this.tileSize[0];
-		}
-		output.push(this.collide(x2,y));
+		}		
+		output|=(this.isBlocking(x2,y));
 		return output;
 	}
 	
-	this.collideVert=function(x,y1,y2)
+	this.isBlockingVert=function(x,y1,y2)
 	{
 		var y;
 		if (y1>y2)
@@ -193,13 +233,14 @@ function Level(jsonfile)
 			y1=y;
 		}
 		y=y1;
-		var output=[];
+		var output=false;
 		while (y<=y2)
 		{
-			output.push(this.collide(x,y));
+			output|=(this.isBlocking(x,y));
 			y+=this.tileSize[1];
 		}
-		output.push(this.collide(x,y2));
+		output|=(this.isBlocking(x,y2));
 		return output;
 	}
 }
+

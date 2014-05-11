@@ -42,13 +42,31 @@ function Ball()
 
 
 //box class, inherits Sprite
-function Box(x,y)
+function Box(x,y)//x,y in blocks
 {
-    Sprite.call(this,"Box",x,y,"box",1);// Parent constructor
-	this.targetX=this.x;
-	this.targetY=this.y;
+    Sprite.call(this,"Box",x*window.level.tileSize[0],(y-0.5)*window.level.tileSize[0],"box",1);// Parent constructor
+	var targetX=this.x;
+	var targetY=this.y;
+	
+	this.lastActionsBeforeDelete=function()
+	{
+		console.log("Prepare to delete a box");
+		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
+		window.level.blockingMap[window.level.xy2i(targetX+this.currentAnim.hitbox[0][0],targetY+this.currentAnim.hitbox[0][1])]=false;
+	}
+	
+	this.setTarget=function(tX,tY)
+	{
+		targetX=tX;
+		targetY=tY;
+	}
+	
     this.update=function(level,allSprites)
 	{
+		//update blockingMap
+		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
+		window.level.blockingMap[window.level.xy2i(targetX+this.currentAnim.hitbox[0][0],targetY+this.currentAnim.hitbox[0][1])]=true;
+		
 		/*//the box can be moved only if stopped
 		if ((this.x==this.targetX)&&(this.y==this.targetY))
 		{
@@ -59,11 +77,13 @@ function Box(x,y)
 		}*/
 
 		//go to target pos
-		if (this.x<this.targetX) this.x++;
-		if (this.x>this.targetX) this.x--;
-		if (this.y<this.targetY) this.y++;
-		if (this.y>this.targetY) this.y--;
+		if (this.x<targetX) this.x++;
+		if (this.x>targetX) this.x--;
+		if (this.y<targetY) this.y++;
+		if (this.y>targetY) this.y--;
 		//$.each(allSprites, function( i, v ){if ((v!=this)&&(this.testCollideSprite(v))) {console.log("Boom!");this.toDelete=true;}});
+		
+		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=true;
 		
 	}
 }
@@ -175,7 +195,7 @@ function Player()
 				break;
 			case "Box":
 				console.log("Move the box "+s.y/32+"  depl"+depl);
-				newDepl=[1000,1000];
+				/*newDepl=[1000,1000];
 				//console.log("test depl[0]>0"+depl[0]);
 				if (depl[0]>0)
 				{
@@ -205,6 +225,7 @@ function Player()
 				if (Math.abs(newDepl[0])<=Math.abs(newDepl[1])) newDepl[1]=depl[1];
 				else newDepl[0]=depl[0];
 				console.log("final newdepl"+newDepl);
+				*/
 				/*if (newDepl[0]<0) push_direction=1;
 				if (newDepl[0]>0) push_direction=2;
 				if (newDepl[1]<0) push_direction=3;
