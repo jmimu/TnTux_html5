@@ -39,12 +39,12 @@
 			},
 			"3" :
 			{
-				"src":"data/walk_up_1.png",
+				"src":"data/push_up_1.png",
 				"box":[[8,32],[39,63]]
 			},
 			"4" :
 			{
-				"src":"data/walk_down_1.png",
+				"src":"data/push_down_1.png",
 				"box":[[8,32],[39,63]]
 			},
 			"size" : [48,64]

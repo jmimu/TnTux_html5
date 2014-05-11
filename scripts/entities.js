@@ -42,10 +42,10 @@ function Ball()
 
 
 //box class, inherits Sprite
-function Box()
+function Box(x,y)
 {
-    Sprite.call(this,"Box",32*12,32*5.5,"box",1);// Parent constructor
-	this.targetX=this.x+32;
+    Sprite.call(this,"Box",x,y,"box",1);// Parent constructor
+	this.targetX=this.x;
 	this.targetY=this.y;
     this.update=function(level,allSprites)
 	{
@@ -118,7 +118,7 @@ function Player()
 			if (this.push_direction==0)
 			{
 				if (this.dir==4) this.setPos("tux_turn",3,this.endOfTurn);
-				else if (this.dir!=3) this.setPos("tux_walk",3);
+				else if ((this.dir!=3)||(this.pos!="tux_walk")) this.setPos("tux_walk",3);
 			}
 		}
 		else if (window.keydown["down"])
@@ -127,7 +127,7 @@ function Player()
 			if (this.push_direction==0)
 			{
 				if (this.dir==3) this.setPos("tux_turn",4,this.endOfTurn);
-				else if (this.dir!=4) this.setPos("tux_walk",4);
+				else if ((this.dir!=4)||(this.pos!="tux_walk")) this.setPos("tux_walk",4);
 			}
 		}
 		else if (window.keydown["left"])
@@ -136,7 +136,7 @@ function Player()
 			if (this.push_direction==0)
 			{
 				if (this.dir==2) this.setPos("tux_turn",1,this.endOfTurn);
-				else if (this.dir!=1) this.setPos("tux_walk",1);
+				else if ((this.dir!=1)||(this.pos!="tux_walk")) this.setPos("tux_walk",1);
 			}
 		}
 		else if (window.keydown["right"])
@@ -145,7 +145,7 @@ function Player()
 			if (this.push_direction==0)
 			{
 				if (this.dir==1) this.setPos("tux_turn",2,this.endOfTurn);
-				else if (this.dir!=2) this.setPos("tux_walk",2);
+				else if ((this.dir!=2)||(this.pos!="tux_walk")) this.setPos("tux_walk",2);
 			}
 		}
 
@@ -174,37 +174,37 @@ function Player()
 				//console.log("Do nothing...");
 				break;
 			case "Box":
-				//console.log("Move the box depl"+depl);
+				console.log("Move the box "+s.y/32+"  depl"+depl);
 				newDepl=[1000,1000];
 				//console.log("test depl[0]>0"+depl[0]);
 				if (depl[0]>0)
 				{
 					newDepl[0]=(s.x+s.currentAnim.hitbox[0][0])-(this.x+this.currentAnim.hitbox[1][0])-1;
-					//console.log("x+ "+newDepl);
+					console.log("x+ "+newDepl);
 				}
 				//console.log("test depl[0]<0"+depl[0]);
 				if (depl[0]<0)
 				{
 					newDepl[0]=(s.x+s.currentAnim.hitbox[1][0])-(this.x+this.currentAnim.hitbox[0][0])+1;
-					//console.log("x- "+newDepl);
+					console.log("x- "+newDepl);
 				}
 				//console.log("test depl[1]>0"+depl[1]);
 				if (depl[1]>0)
 				{
 					newDepl[1]=(s.y+s.currentAnim.hitbox[0][1])-(this.y+this.currentAnim.hitbox[1][1])-1;
-					//console.log("y+ "+newDepl);
+					console.log("y+ "+newDepl);
 				}
 				//console.log("test depl[1]<0"+depl[1]);
 				if (depl[1]<0)
 				{
 					newDepl[1]=(s.y+s.currentAnim.hitbox[1][1])-(this.y+this.currentAnim.hitbox[0][1])+1;
-					//console.log("y- "+newDepl);
+					console.log("y- "+newDepl);
 				}
 
 				//cant compare if one is zero...
-				if (Math.abs(newDepl[0])<Math.abs(newDepl[1])) newDepl[1]=depl[1];
+				if (Math.abs(newDepl[0])<=Math.abs(newDepl[1])) newDepl[1]=depl[1];
 				else newDepl[0]=depl[0];
-				//console.log("final newdepl"+newDepl);
+				console.log("final newdepl"+newDepl);
 				/*if (newDepl[0]<0) push_direction=1;
 				if (newDepl[0]>0) push_direction=2;
 				if (newDepl[1]<0) push_direction=3;

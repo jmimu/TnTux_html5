@@ -36,7 +36,13 @@ startGame=function()
 	//list of sprites
 	var allSprites=[player];
 	allSprites.push(new Ball());
-	allSprites.push(new Box());
+	allSprites.push(new Box(9*32,4*32+16));
+	allSprites.push(new Box(9*32,5*32+16));
+	allSprites.push(new Box(9*32,6*32+16));
+	allSprites.push(new Box(8*32,5*32+16));
+	allSprites.push(new Box(8*32,6*32+16));
+	allSprites.push(new Box(11*32,8*32+16));
+	allSprites.push(new Box(10*32,8*32+16));
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);

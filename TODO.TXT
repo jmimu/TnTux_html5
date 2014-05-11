@@ -1,8 +1,5 @@
-mettre un flag pour chaque sprite hz ou zen,
-et gerer la liste des sprites existants (destructeur ?)
-pour remplir automatiquement les listes de hz et vert.
-
-les anim de marche vers le bas et le haut n'ont pas la meme couleur que les autres...
+les collisions avec des series de boites ou de murs et boites ne marchent pas.
+il faudrait tout unifier, et/ou ordonner les collisions par nombre de pixels en commun.
 
 Faire passages :
  - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)
@@ -10,6 +7,7 @@ Faire passages :
  - parodius : glissade hz avec obstacles a eviter
  - metal gear : infiltration
  - zelda 1 : debut avec grotte
+lui faire pousser un caddie...
 
 Peut pas mourir : si il tombe dans un trou on le voit revenir par ailleurs (debut de la salle)
 

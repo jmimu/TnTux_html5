@@ -81,7 +81,7 @@ function Level(jsonfile)
 		if (scrollX>0) scrollX=0;
 		if (scrollY>0) scrollY=0;
 		var drawW=Math.floor(CANVAS_WIDTH/this.tileSize[0])+1;
-		var drawH=Math.floor(CANVAS_HEIGHT/this.tileSize[1])+1;
+		var drawH=Math.floor(CANVAS_HEIGHT/this.tileSize[1])+1+1;//the last "+1" is for first hidden row relief
 		var drawX=Math.floor(-scrollX/this.tileSize[0]);
 		var drawY=Math.floor(-scrollY/this.tileSize[1]);
 		var i;//index of current tile
