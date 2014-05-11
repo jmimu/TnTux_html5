@@ -66,6 +66,7 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 	
 	this.loopedOnce=false;//to know if one loop of animation is finished
 	this.callback=0;//call this function at the end of the animation
+	this.currentAnim=0;
 	
 	//you can specify a callback when the animation is finished
 	this.setPos=function(newpos,dir,callback)
@@ -75,11 +76,12 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		this.frame=0;
 		if(typeof(callback)==='undefined') callback = 0;
 		this.callback=callback;
-		if (this.pos in window.dataManager.anims)
+		if ((this.pos in window.dataManager.anims)&&(this.dir in window.dataManager.anims[this.pos]))
 		{
 			//console.log("pos set to  "+newpos);
-			this.w=window.dataManager.anims[this.pos][this.dir].size[0];
-			this.h=window.dataManager.anims[this.pos][this.dir].size[1];
+			this.currentAnim=window.dataManager.anims[this.pos][this.dir];
+			this.w=this.currentAnim.size[0];
+			this.h=this.currentAnim.size[1];
 			this.loopedOnce=false;
 		}else
 			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
@@ -89,87 +91,78 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 	
 	this.animate=function(dt)
 	{
-		if (this.pos in window.dataManager.anims)
+		this.frame+=dt;
+		if (Math.floor(this.frame)>=this.currentAnim.len)
 		{
-			this.frame+=dt;
-			if (Math.floor(this.frame)>=window.dataManager.anims[this.pos][this.dir].len)
-			{
-				this.frame=0;
-				this.loopedOnce=true;
-				if (this.callback!=0)
-					this.callback();					
-			}
+			this.frame=0;
+			this.loopedOnce=true;
+			if (this.callback!=0)
+				this.callback();					
 		}
 	}
 	
 	this.draw=function(camera)
 	{
-		if ((this.pos in window.dataManager.anims)&&(this.dir in window.dataManager.anims[this.pos]))
-		{
-			var anim=window.dataManager.anims[this.pos][this.dir];
-			var frameXimg=((Math.floor(this.frame))%anim.nbC)*anim.size[0];
-			var frameYimg=(Math.floor((Math.floor(this.frame)/anim.nbC)))*anim.size[1];
-			
-			canvas.drawImage(anim.img,frameXimg,frameYimg,
-					anim.size[0],anim.size[1],
-					this.x-camera.getX(),this.y-camera.getY(),this.w,this.h);
-		}else{
-			dataError("Animation "+this.pos+" dir "+this.dir+" not found.");
-		}
+		var frameXimg=((Math.floor(this.frame))%this.currentAnim.nbC)*this.currentAnim.size[0];
+		var frameYimg=(Math.floor((Math.floor(this.frame)/this.currentAnim.nbC)))*this.currentAnim.size[1];
+		
+		canvas.drawImage(this.currentAnim.img,frameXimg,frameYimg,
+				this.currentAnim.size[0],this.currentAnim.size[1],
+				this.x-camera.getX(),this.y-camera.getY(),this.w,this.h);
 	}
 	
-	this.testCollideSprite=function(s)
+	//TODO: compute main collision direction
+	this.testCollideSprite=function(s,depl)
 	{
-		var anim1=window.dataManager.anims[this.pos][this.dir];
-		var anim2=window.dataManager.anims[s.pos][s.dir];
-		return (((this.x+anim1.hitbox[1][0] >= s.x+anim2.hitbox[0][0])&&(this.x+anim1.hitbox[0][0] <= s.x+anim2.hitbox[1][0]))
-			&&((this.y+anim1.hitbox[1][1] >= s.y+anim2.hitbox[0][1])&&(this.y+anim1.hitbox[0][1] <= s.y+anim2.hitbox[1][1])));
+		return (((this.x+this.currentAnim.hitbox[1][0]+depl[0] >= s.x+s.currentAnim.hitbox[0][0])
+				&&(this.x+this.currentAnim.hitbox[0][0]+depl[0] <= s.x+s.currentAnim.hitbox[1][0]))
+			&&((this.y+this.currentAnim.hitbox[1][1]+depl[1] >= s.y+s.currentAnim.hitbox[0][1])
+				&&(this.y+this.currentAnim.hitbox[0][1]+depl[1] <= s.y+s.currentAnim.hitbox[1][1])));
 	}
 	
 	this.testCollideLevel=function(level,vx,vy)
 	{
-		var anim=window.dataManager.anims[this.pos][this.dir];
 		if (vx>0)//go right
 		{
-			var collide=level.collideVert(this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
+			var collide=level.collideVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+anim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+anim.hitbox[1][0]+1);
+				vx=(Math.floor((this.x+this.currentAnim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.currentAnim.hitbox[1][0]+1);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vx<0)//go left
 		{
-			var collide=level.collideVert(this.x+anim.hitbox[0][0]+vx,this.y+anim.hitbox[0][1],this.y+anim.hitbox[1][1]);
+			var collide=level.collideVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1],this.y+this.currentAnim.hitbox[1][1]);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+anim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+anim.hitbox[0][0]);
+				vx=(Math.floor((this.x+this.currentAnim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+this.currentAnim.hitbox[0][0]);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vy>0)//go down
 		{
-			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[1][1]+vy);
+			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+anim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+anim.hitbox[1][1]+1);
+				vy=(Math.floor((this.y+this.currentAnim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.currentAnim.hitbox[1][1]+1);
 				//console.log("vy "+vy);
 			}
 		}
 		if (vy<0)//go up
 		{
-			var collide=level.collideHz(this.x+anim.hitbox[0][0],this.x+anim.hitbox[1][0],this.y+anim.hitbox[0][1]+vy);
+			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0],this.x+this.currentAnim.hitbox[1][0],this.y+this.currentAnim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+anim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+anim.hitbox[0][1]);
+				vy=(Math.floor((this.y+this.currentAnim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+this.currentAnim.hitbox[0][1]);
 				//console.log("vy "+vy);
 			}
 		}
@@ -177,45 +170,45 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		//then the 4 diagonals?
 		if (vx>0)//go right
 		{
-			var collide=level.collideVert(this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[0][1]+vy,this.y+anim.hitbox[1][1]+vy);
+			var collide=level.collideVert(this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("right collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+anim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+anim.hitbox[1][0]+1);
+				vx=(Math.floor((this.x+this.currentAnim.hitbox[1][0]+1+vx)/level.tileSize[0]))*level.tileSize[0]-(this.x+this.currentAnim.hitbox[1][0]+1);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vx<0)//go left
 		{
-			var collide=level.collideVert(this.x+anim.hitbox[0][0]+vx,this.y+anim.hitbox[0][1]+vy,this.y+anim.hitbox[1][1]+vy);
+			var collide=level.collideVert(this.x+this.currentAnim.hitbox[0][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("left collide "+this.x+" "+vx);
-				vx=(Math.floor((this.x+anim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+anim.hitbox[0][0]);
+				vx=(Math.floor((this.x+this.currentAnim.hitbox[0][0]+vx)/level.tileSize[0])+1)*level.tileSize[0]-(this.x+this.currentAnim.hitbox[0][0]);
 				//console.log("vx "+vx);
 			}
 		}
 		if (vy>0)//go down
 		{
-			var collide=level.collideHz(this.x+anim.hitbox[0][0]+vx,this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[1][1]+vy);
+			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[1][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("down collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+anim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+anim.hitbox[1][1]+1);
+				vy=(Math.floor((this.y+this.currentAnim.hitbox[1][1]+1+vy)/level.tileSize[1]))*level.tileSize[1]-(this.y+this.currentAnim.hitbox[1][1]+1);
 				//console.log("vy "+vy);
 			}
 		}
 		if (vy<0)//go up
 		{
-			var collide=level.collideHz(this.x+anim.hitbox[0][0]+vx,this.x+anim.hitbox[1][0]+vx,this.y+anim.hitbox[0][1]+vy);
+			var collide=level.collideHz(this.x+this.currentAnim.hitbox[0][0]+vx,this.x+this.currentAnim.hitbox[1][0]+vx,this.y+this.currentAnim.hitbox[0][1]+vy);
 			//console.log("collide:"+collide);
 			if ($.inArray("wall",collide)>-1) //round to next tile
 			{
 				//console.log("up collide "+this.y+" "+vy);
-				vy=(Math.floor((this.y+anim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+anim.hitbox[0][1]);
+				vy=(Math.floor((this.y+this.currentAnim.hitbox[0][1]+vy)/level.tileSize[1])+1)*level.tileSize[1]-(this.y+this.currentAnim.hitbox[0][1]);
 				//console.log("vy "+vy);
 			}
 		}
