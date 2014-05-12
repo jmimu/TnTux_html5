@@ -118,13 +118,21 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 				this.x-camera.getX(),this.y-camera.getY(),this.w,this.h);
 	}
 	
-	//TODO: compute main collision direction
+	//TODO: compute main collision direction?
 	this.testCollideSprite=function(s,depl)
 	{
 		return (((this.x+this.currentAnim.hitbox[1][0]+depl[0] >= s.x+s.currentAnim.hitbox[0][0])
 				&&(this.x+this.currentAnim.hitbox[0][0]+depl[0] <= s.x+s.currentAnim.hitbox[1][0]))
 			&&((this.y+this.currentAnim.hitbox[1][1]+depl[1] >= s.y+s.currentAnim.hitbox[0][1])
 				&&(this.y+this.currentAnim.hitbox[0][1]+depl[1] <= s.y+s.currentAnim.hitbox[1][1])));
+	}
+	
+	this.testCollideCord=function(x,y)
+	{
+		return (((this.x+this.currentAnim.hitbox[1][0] >= x)
+				&&(this.x+this.currentAnim.hitbox[0][0] <= x))
+			&&((this.y+this.currentAnim.hitbox[1][1] >= y)
+				&&(this.y+this.currentAnim.hitbox[0][1] <= y)));
 	}
 	
 	this.testCollideLevel=function(level,vx,vy)

@@ -6,6 +6,8 @@ on utilise blockingMap, sinon on utilise la fonction de collision precedente.
 On pourra meme du coup pousser le perso qui est derriere la boite (on enregistre le mouvement de la boite)
 On pourrait aussi ne pas faire de target... bof
 
+On ne peut pousser que quand la box est arrivee a destination. tant mieux
+
 On pourrait faire une map de choses impassables, avec les murs et les boites.
 Quand une boite est entre 2  cases on bloque les deux ?
 
