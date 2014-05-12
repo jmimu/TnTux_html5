@@ -47,12 +47,14 @@ function Box(x,y)//x,y in blocks
     Sprite.call(this,"Box",x*window.level.tileSize[0],(y-0.5)*window.level.tileSize[0],"box",1);// Parent constructor
 	var targetX=this.x;
 	var targetY=this.y;
+	this.currentMoveX=0;
+	this.currentMoveY=0;
 	
 	this.lastActionsBeforeDelete=function()
 	{
 		console.log("Prepare to delete a box");
-		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
-		window.level.blockingMap[window.level.xy2i(targetX+this.currentAnim.hitbox[0][0],targetY+this.currentAnim.hitbox[0][1])]=false;
+		if (this.isTileAligned())
+			window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
 	}
 	
 	this.setTarget=function(tX,tY)
@@ -60,12 +62,18 @@ function Box(x,y)//x,y in blocks
 		targetX=tX;
 		targetY=tY;
 	}
+
+    this.isTileAligned=function()
+	{
+		return (((this.x+this.currentAnim.hitbox[0][0])%window.level.tileSize[0]==0)
+			&& ((this.y+this.currentAnim.hitbox[0][1])%window.level.tileSize[1]==0))
+	}
 	
-    this.update=function(level,allSprites)
+    this.update=function(allSprites)
 	{
 		//update blockingMap
-		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
-		window.level.blockingMap[window.level.xy2i(targetX+this.currentAnim.hitbox[0][0],targetY+this.currentAnim.hitbox[0][1])]=true;
+		if (this.isTileAligned())
+			window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
 		
 		/*//the box can be moved only if stopped
 		if ((this.x==this.targetX)&&(this.y==this.targetY))
@@ -77,13 +85,15 @@ function Box(x,y)//x,y in blocks
 		}*/
 
 		//go to target pos
-		if (this.x<targetX) this.x++;
-		if (this.x>targetX) this.x--;
-		if (this.y<targetY) this.y++;
-		if (this.y>targetY) this.y--;
+		if (this.x<targetX) {this.x++;this.currentMoveX=1;}
+		if (this.x>targetX) {this.x--;this.currentMoveX=-1;}
+		if (this.y<targetY) {this.y++;this.currentMoveY=1;}
+		if (this.y>targetY) {this.y--;this.currentMoveY=-1;}
 		//$.each(allSprites, function( i, v ){if ((v!=this)&&(this.testCollideSprite(v))) {console.log("Boom!");this.toDelete=true;}});
-		
-		window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=true;
+
+		//update blockingMap
+		if (this.isTileAligned())
+			window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=true;
 		
 	}
 }
