@@ -50,6 +50,7 @@ function Box(x,y)//x,y in blocks
 	var targetY=this.y;
 	this.currentMoveX=0;
 	this.currentMoveY=0;
+	this.askedToMove=0;//accumulator of presure.
 	
 	this.lastActionsBeforeDelete=function()
 	{
@@ -70,8 +71,44 @@ function Box(x,y)//x,y in blocks
 			&& ((this.y+this.currentAnim.hitbox[0][1])%window.level.tileSize[1]==0))
 	}
 	
+	this.askToMove=function(dir)
+	{
+		if (this.isTileAligned())
+			this.askedToMove+=2;
+		if (this.askedToMove>=10)
+		{
+			if (dir==1)
+			{ //check if next tile is empty
+				if (!window.level.blockingMap[window.level.xy2i(
+					this.x+this.currentAnim.hitbox[0][0]-level.tileSize[0],this.y+this.currentAnim.hitbox[0][1])])
+					targetX-=level.tileSize[0];
+			}
+			if (dir==2)
+			{ //check if next tile is empty
+				if (!window.level.blockingMap[window.level.xy2i(
+					this.x+this.currentAnim.hitbox[0][0]+level.tileSize[0],this.y+this.currentAnim.hitbox[0][1])])
+					targetX+=level.tileSize[0];
+			}
+			if (dir==3)
+			{ //check if next tile is empty
+				if (!window.level.blockingMap[window.level.xy2i(
+					this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1]-level.tileSize[1])])
+					targetY-=level.tileSize[1];
+			}
+			if (dir==4)
+			{ //check if next tile is empty
+				if (!window.level.blockingMap[window.level.xy2i(
+					this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1]+level.tileSize[1])])
+					targetY+=level.tileSize[1];
+			}
+			this.askedToMove=10;
+		}
+	}
+	
+	
     this.update=function(allSprites)
 	{
+		if (this.askedToMove>0) this.askedToMove-=1;
 		//update blockingMap
 		if (this.isTileAligned())
 			window.level.blockingMap[window.level.xy2i(this.x+this.currentAnim.hitbox[0][0],this.y+this.currentAnim.hitbox[0][1])]=false;
@@ -190,19 +227,41 @@ function Player()
 		
 		//if there is a push_direction, check if pushing a box
 		//TODO
+		if (this.push_direction==1)
+		{
+			console.log("Pushing");
+			var pushX=this.x+this.currentAnim.hitbox[0][0]-1;
+			var pushY=this.y+(this.currentAnim.hitbox[0][1]+this.currentAnim.hitbox[1][1]+1)/2;
+			for (var i=0;i<allSprites.length;i++)
+				if (allSprites[i].testCollideCord(pushX,pushY))
+					allSprites[i].askToMove(this.push_direction);
+		}
 		if (this.push_direction==2)
 		{
 			console.log("Pushing");
 			var pushX=this.x+this.currentAnim.hitbox[1][0]+1;
 			var pushY=this.y+(this.currentAnim.hitbox[0][1]+this.currentAnim.hitbox[1][1]+1)/2;
 			for (var i=0;i<allSprites.length;i++)
-			{
 				if (allSprites[i].testCollideCord(pushX,pushY))
-				{
-					console.log("Pushing "+allSprites[i].x);
-					allSprites[i].setTarget(allSprites[i].x+32,allSprites[i].y);
-				}
-			}
+					allSprites[i].askToMove(this.push_direction);
+		}
+		if (this.push_direction==3)
+		{
+			console.log("Pushing");
+			var pushX=this.x+(this.currentAnim.hitbox[0][0]+this.currentAnim.hitbox[1][0]+1)/2;
+			var pushY=this.y+this.currentAnim.hitbox[0][1]-1;
+			for (var i=0;i<allSprites.length;i++)
+				if (allSprites[i].testCollideCord(pushX,pushY))
+					allSprites[i].askToMove(this.push_direction);
+		}
+		if (this.push_direction==4)
+		{
+			console.log("Pushing");
+			var pushX=this.x+(this.currentAnim.hitbox[0][0]+this.currentAnim.hitbox[1][0]+1)/2;
+			var pushY=this.y+this.currentAnim.hitbox[1][1]+1;
+			for (var i=0;i<allSprites.length;i++)
+				if (allSprites[i].testCollideCord(pushX,pushY))
+					allSprites[i].askToMove(this.push_direction);
 		}
 		
 	}

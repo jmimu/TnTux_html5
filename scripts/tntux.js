@@ -43,7 +43,7 @@ startGame=function()
 	allSprites.push(new Box(11,8));
 	allSprites.push(new Box(10,8));
 	
-	allSprites[4].setTarget(20*32,allSprites[4].y);
+	allSprites[4].setTarget(14*32,allSprites[4].y);
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);

@@ -1,19 +1,6 @@
 TODO
 * ajouter une couleur de fond et permettre des transparences dans les tiles ! (pour le relief)
-* mettre plutot les 4 tiles sur lesquelles sont les bords de la box en impassable, plutot que la target!
-Ou alors on fait une foncion isTileAligned qui dit si on es tout pile aligne, et dans ce cas
-on utilise blockingMap, sinon on utilise la fonction de collision precedente.
-On pourra meme du coup pousser le perso qui est derriere la boite (on enregistre le mouvement de la boite)
-On pourrait aussi ne pas faire de target... bof
-
-On ne peut pousser que quand la box est arrivee a destination. tant mieux
-
-On pourrait faire une map de choses impassables, avec les murs et les boites.
-Quand une boite est entre 2  cases on bloque les deux ?
-
-Et si une boite bouge et que quelqu'un est a sa place, comment on fait?
-Il faudrait avoir tous les mouvements de tout, et les contraintes et regler ca d'un coup ?
-
+* parfois difficile de passer dans un trou de 1 tuile. Il faudrait peut-etre dimiuer la hitbox ?
 
 Faire passages :
  - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)
