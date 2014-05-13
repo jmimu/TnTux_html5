@@ -230,5 +230,6 @@ function Sprite(subClassName,x,y,pos,dir,hz)
 		
 		return [vx,vy];
 	}
+	
 }
 

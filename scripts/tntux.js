@@ -28,30 +28,36 @@ startGame=function()
 		window.keydown[keyName(event)] = false;
 	});
 	
-	var player=new Player();
 	var level=window.dataManager.level;
+	var player=level.player;
 	var camera=new Camera(level);
 	
-	//list of sprites
-	var allSprites=[player];
-	allSprites.push(new Ball());
-	allSprites.push(new Box(9,5));
-	allSprites.push(new Box(9,6));
-	allSprites.push(new Box(9,5));
-	allSprites.push(new Box(8,6));
-	allSprites.push(new Box(8,7));
-	allSprites.push(new Box(11,8));
-	allSprites.push(new Box(10,8));
+	level.addSprite(new Ball());
+	/*level.addSprite(new Box(9,5));
+	level.addSprite(new Box(9,6));
+	level.addSprite(new Box(9,5));
+	level.addSprite(new Box(8,6));
+	level.addSprite(new Box(8,7));
+	level.addSprite(new Box(11,8));
+	level.addSprite(new Box(10,8));*/
 	
-	allSprites[4].setTarget(14*32,allSprites[4].y);
+	//level.allSprites[4].setTarget(14*32,level.allSprites[4].y);
 	
 	(update=function(){
 		canvas.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		
-		$.each(allSprites, function( i, v ){v.update(level,allSprites);if (v.isToDelete()) allSprites.splice(i,1);});
+		for (var i=0;i<level.allSprites.length;i++)
+		{
+			level.allSprites[i].update(level);
+			if (level.allSprites[i].isToDelete())
+			{
+				level.allSprites.splice(i,1);
+				i--;
+			}
+		}
 		camera.moveTo(player.x,player.y);
 		
-		level.draw(camera,allSprites);
+		level.draw(camera);
 		//ball.draw(camera);
 		//player.draw(camera);
 		//level.draw(camera,1);

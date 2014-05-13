@@ -14,6 +14,14 @@ function Level(jsonfile)
 	this.firstMainTileIndex=0;
 	this.firstMetaTileIndex=0;
 	this.tileSize=[];//[sx,sy]
+	this.allSprites=[];
+	this.player=0;
+	
+	this.addSprite=function(s)
+	{
+		this.allSprites.push(s);
+		return s;
+	}
 	
 	window.level=this;
 	
@@ -31,6 +39,9 @@ function Level(jsonfile)
 	//make a closure to read the json file
 	this.loadfile = function()
 	{
+		this.allSprites=[];
+		this.player=0;
+		
 		console.log("Load level file "+this.jsonfile);
 		var obj = this;//closure to access "this"
 		$.getJSON(obj.jsonfile, function(data) {
@@ -66,22 +77,37 @@ function Level(jsonfile)
 					{
 						obj.metaMap=value_layer["data"];
 						
-						//initialization of blockingMap
+						//initialization of blockingMap and player
 						//obj.blockingMap=obj.metaMap.slice();//deep copy
 						obj.blockingMap=[];
 						console.log("Level: create blockingMap according to "+obj.firstMetaTileIndex);
 						for (var i=0;i<obj.metaMap.length;i++)
 						{
-							if (obj.metaMap[i]>=obj.firstMetaTileIndex)
+							if (obj.metaMap[i]==obj.firstMetaTileIndex)
 								obj.blockingMap.push(true);
 							else
 								obj.blockingMap.push(false);
+							if (obj.metaTilesSens[obj.metaMap[i]-obj.firstMetaTileIndex]=="begin")
+							{
+								obj.player=new Player((i%obj.mapSize[0])*obj.tileSize[0],(i/obj.mapSize[0])*obj.tileSize[1]);
+								obj.allSprites.push(obj.player);
+							}
 						}
-						
-
+					}
+					if ((value_layer["type"]=="objectgroup")&&(value_layer["name"]=="objects"))
+					{
+						for (var i=0;i<value_layer["objects"].length;i++)
+						{
+							if (value_layer["objects"][i]["type"]=="box")
+								obj.allSprites.push(new Box(value_layer["objects"][i]["x"],value_layer["objects"][i]["y"]));
+							if (value_layer["objects"][i]["type"]=="fish")
+								obj.allSprites.push(new Fish(value_layer["objects"][i]["x"],value_layer["objects"][i]["y"]));
+							//console.log("New object: "+value_layer["objects"][i]["type"]+" "
+							//	+value_layer["objects"][i]["x"]+" "+value_layer["objects"][i]["y"]);
+						}
 					}
 				});
-
+			if (obj.player==0) {dataError("DataManager: error! No 'begin' tile in "+obj.jsonfile);return;}
 			window.dataManager.onNewLoaded(obj.jsonfile);
 		});
 	};
@@ -91,12 +117,12 @@ function Level(jsonfile)
 	//draw in several layers to have correct supperpositions
 	//uses a list of hz sprites (right on the floor, no precise order)
 	//and vertical sprites that have to be drawn in correct order
-	this.draw=function(camera,allSprites)
+	this.draw=function(camera)
 	{
 		var hzSprites=[];
 		var vertSprites=[];
 		
-		$.each(allSprites, function( i, v )
+		$.each(this.allSprites, function( i, v )
 		{
 			if (v.isHz)
 				hzSprites.push(v);
@@ -150,7 +176,7 @@ function Level(jsonfile)
 						
 				for (var x=drawX;x<drawX+drawW;x++)
 				{
-					if ((this.metaMap[i]>0)||(height==0))
+					if ((this.metaMap[i]==this.firstMetaTileIndex)||(height==0))
 					{
 						if ((0<=x)&&(x<this.mapSize[0])&&(0<=y)&&(y<this.mapSize[1]))
 						{					

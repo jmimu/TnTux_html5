@@ -8,12 +8,50 @@
  </tileset>
  <layer name="main" width="64" height="32">
   <data encoding="base64" compression="zlib">
-   eJzlmclSAzEMRO3ZyP9/MVCVLpqmtUyS4QAHFXHiRU+SZdm8jTHe/rnsH3K7UOZd0Ma6z8xxM+2zcjX/bnQ8y+3s8Gr+K7jVpq9cC/Mfhe82kQ7/Z3u5y0593PgO91VyNNZTnbUNtuMu4K7suZrfoljs+DxbMxLo8IzNH43Jg8a7vNSdG2NXmWcG4vhhg9/khw0e8bnj6fgfdlJ2tB+xQbT/qz4z0Vn1UL863g7/WvBrn6v4weDsPcfXmedilvOL1gOR3o7J9V2L37v8Vdyyn3V/ProPXU5l7km6RvlG13Y2wHmm/JXeyHcZq7Nj1y7L+BnDrkbdR3/faYzt5ruKf46vPJfVnspe7cN59zn2A+eFKN+wHxx7xs/nPtuP11rGd32iONO5VVeunVSvTdbmNSp7ZfxgqmJA54j21CLjtY5cEnG+m8Pn0JXWiuKa9Yr4uRZSVujvxrtYq86iJemLubL871hQe6IOXenzTp9RAyAP7NTf8aG9BbZz8Z+x85zuDN8Ms/oyyjXMcMiYzPc6lnlZl2381AP83fOSddA46NyPMttEc2jt5IRtehh/4zvkZfQ/e/479uhu6cZX/OxLZa/u+mACq7JD2FZd/iiHYh2X9874nrm17snG6h5UG6gtovtv5hOXEyKfZ/mj4tczp8PP3Ho+6V7F/HoGR/yOxe0tN+7M+0C0Hq/hcqarL8C30BzZvI7f+VZzcve+dtYG6DNl/E5/s/cO1jPSseJ3tWw3PlT03azin2bdilm5+C2r6sv8aovOXXodvdzv/MufXbvLzb7Q99AqBvh+xbF25g3hNvpnoMZy557RuTuCRWueiJ/H4L33FW+3hwiznp3L3d0ch9Zw3Xc1Hss1dtfXytoZy7pyjZ+dQxE/35txj9K+XX6nI0v2P4QrJVoP78Xczjjd91z//ybTM/zdt8C/ws+6Z++j2RxRbmX+/yzv0Vc2Fg==
+   eJzlmelu4zAMhOVDTt//ibcFMujsdHjYiYHF9gdR29HBj6QoSn2MMR6/XOanfNwoy1PwjnlfGePDvJ+Vu/mn0fEst7PDu/nv4FabvnMujH8UvttFOvxf7+tTJrVx/Tvcd8nRmE911newHU8Bd2XPzfwWxWLH59mckUCHV2x+NSYP6u/yUnds9N1knCUQxw8bvMofPWc2uOJzx9PxP+yk7Hi/YgPH/Ai+qy6RzqqH+tXxdvi3gl/bnOVXG0RtwODsvYzvPc/FLOcXrQcivR2Ta7sVv1/1v/Mj+HV9Xl2HLqcy90I6RflG53Y2wH6m/LzPOZ8j32Wsbs137bKOnzHsatQ5+utOY2yab1X9t4zvPJfVnspercPl6XOsB84LUeyxHxx7xs/7PtuP51rH3/pEcaZjq65cO6leu8zNc1T2yvjBVMWAjhGtqVX6ax25JhLlDZdDN5orimvWK+LnWkhZob/r72Kt2ovWpC3GyvK/Y0HtiTp0o+dJz6gBkAcmtXd8eN8D27n4z9h5TLeH74ZZfRnlGmY4pE/me+3LvKzLPn7qAf7ufsk6aBx0zkeZbaIxtHZywjY9jL/xDXkZ7c/U/1F+iM6Wrn/Fz75U9uqsDyawKjuEbdXlj3Io5nF574zvmVvrnqyvrkG1gdoiOv9mPnE5IfJ5lj8qft1zOvzMrfuTrlWMr3twxO9Y3Npy/c7cD0Tz8RwuZ7r6AnwrjZGN6/idbzUnd89rZ22ANov0n/Q3u+9gPSMdK35Xy3bjQ0XvzSr+xcxbMSsX32VVbbMzT+csvY1e7nf+5Wf33uVmX+h9aBUD7qw7G9wq3T1QY7lzzuicHcGiNU/Ez31w3/uOu9tDhFnPjuXObo5Da7juvRr35Rq762tl7fRlXbnGz/ahiJ/PzThHadsuv9ORJfsfwp0SzYf7Yn7PON13vfP5F0X5u3eB/ws/657dj2ZjRLmV+X+z/AEeeDYD
   </data>
  </layer>
  <layer name="meta" width="64" height="32">
   <data encoding="base64" compression="zlib">
-   eJztmVEOwBAQRF3C/a/aL4komujYnWVeImmbYN+iJHJKKV9erPHqt8UjDgbvgqU/y5jX9GLqvbPFjcLCjTl3f/1ndSPMm10xsnsXtP45/L3yG2lsUbHm5hnlj86jxRl1R04RbUU6k63WZ1h3O3I9ao/BtwXtz+g4I9L/fwfylz/r/m+Bxl/+8n9/Q7bPTO1/41zwvANAs+JwgvsfB2v/UX9M91AM92NWnO73hfxVHoLQE9s=
+   eJztmNEOgCAIRfkJH/r/H+3JrRlYQ8SLcra2akkcKJcVIiqHbxf5Uu+7mhV5IHhXPP1Rev6Ey4k7RsvbCg835NqN+vfGRnhunjlK+9q4EeCci3B+R1q31p27ZlYeK/jTfxSscpJ6O/rMW9fLoxczamoRK9I3mXY8wvs1o9ZSPATfFmt/RMceiPO8J+mf/lb+EeuY/U//9H+fs4yPzCnrfAnUta4GjcMO7iMO3v7S/Vb1QZr/kP8DWbK73xfpn9sNNsUVgw==
   </data>
  </layer>
+ <objectgroup name="objects" width="64" height="32">
+  <object name="box2" type="box" x="492" y="274">
+   <ellipse/>
+  </object>
+  <object name="box2" type="box" x="494" y="239">
+   <ellipse/>
+  </object>
+  <object name="box2" type="box" x="497" y="306">
+   <ellipse/>
+  </object>
+  <object name="box2" type="box" x="528" y="275">
+   <ellipse/>
+  </object>
+  <object name="box2" type="box" x="463" y="270">
+   <ellipse/>
+  </object>
+  <object name="box2" type="box" x="459" y="336">
+   <ellipse/>
+  </object>
+  <object type="fish" x="174" y="524">
+   <ellipse/>
+  </object>
+  <object type="fish" x="206" y="528">
+   <ellipse/>
+  </object>
+  <object type="fish" x="239" y="528">
+   <ellipse/>
+  </object>
+  <object type="fish" x="271" y="526">
+   <ellipse/>
+  </object>
+  <object type="fish" x="296" y="529">
+   <ellipse/>
+  </object>
+  <object type="fish" x="328" y="526">
+   <ellipse/>
+  </object>
+ </objectgroup>
 </map>
