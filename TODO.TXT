@@ -1,6 +1,15 @@
 TODO
+* la durée des animations de marche n'est pas la même suivant les directions, bizarre
 * ajouter une couleur de fond et permettre des transparences dans les tiles ! (pour le relief)
+* mettre une couche en plus "onFloor" dans le niveau, qui repertorie ce qu'il y a en ce moment sur le sol
+(trace de pas, debris, poudre) utiliser le tileset normal (pour pouvoir aussi mettre des empruntes
+pas effacables)
+* faire une couche pour les tuiles hautes, avec un autre tileset
 * parfois difficile de passer dans un trou de 1 tuile. Il faudrait peut-etre dimiuer la hitbox ?
+
+voir :
+http://acoeuretacris.centerblog.net/6585147-les-oiseaux-manchot-empereur?ii=1
+http://www.pixelprospector.com/
 
 Faire passages :
  - frogger : simulations de routes ou il faut traverser sans se faire ecraser (moto-neige)
@@ -8,13 +17,21 @@ Faire passages :
  - parodius : glissade hz avec obstacles a eviter
  - metal gear : infiltration
  - zelda 1 : debut avec grotte
+ - bomberman : pouvoir poser des bombes et se debarrasser de robots (bombes limitees ?)
+ - goof troops : relancer les bombes d'un boss
 lui faire pousser un caddie...
+
+faire trembler l'ecran quand il y a une explosion
+animation de destruction de terrain (remplacer la tuile et creer un sprite ou des particules
+qui montrent un eboulement)
+particule de fumee
 
 Peut pas mourir : si il tombe dans un trou on le voit revenir par ailleurs (debut de la salle)
 
 recuperer des poissons et les mettre dans sa besace, le amene dans une fabrique qui fait des conserves
 avec et pour les pinguins
 
+scene de depart: on se promene et explosion qui fait apparaitre un passage
 
 Pour faire l'equivalent de donnee membre protegee:
 function Foo()
