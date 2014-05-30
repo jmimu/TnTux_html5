@@ -2,7 +2,7 @@
 //ball class, inherits Sprite
 function Ball()
 {
-    Sprite.call(this,"Ball",192,128,"tux_walk",4);// Parent constructor
+  Sprite.call(this,"Ball",192,128,"tux_walk",4);// Parent constructor
   this.vx=0;
   this.vy=0;
   

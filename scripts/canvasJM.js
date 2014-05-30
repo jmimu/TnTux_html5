@@ -8,7 +8,7 @@ var CANVAS_HEIGHT = 32*14;
 var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
             "' height='" + CANVAS_HEIGHT + "'></canvas>");
 var canvas = canvasElement.get(0).getContext("2d");
-var FPS = 20;
+var FPS = 30;
 
 canvasElement.appendTo('body');
 

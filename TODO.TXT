@@ -1,10 +1,8 @@
 TODO
 * la durée des animations de marche n'est pas la même suivant les directions, bizarre
-* ajouter une couleur de fond et permettre des transparences dans les tiles ! (pour le relief)
 * mettre une couche en plus "onFloor" dans le niveau, qui repertorie ce qu'il y a en ce moment sur le sol
 (trace de pas, debris, poudre) utiliser le tileset normal (pour pouvoir aussi mettre des empruntes
 pas effacables)
-* faire une couche pour les tuiles hautes, avec un autre tileset
 * parfois difficile de passer dans un trou de 1 tuile. Il faudrait peut-etre dimiuer la hitbox ?
 
 voir :

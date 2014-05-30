@@ -32,11 +32,13 @@ function DataManager()
   }
   
   //make a closure to read the json file
-  this.loadfile = function(callbackReady,filename)
+  this.loadfile = function(callbackReady,filename,level)
   {
     var obj = this;//closure to access "this"
     obj.callbackReady=callbackReady;
     obj.filename=filename;
+    obj.level=level;
+    
     
     obj.onNewToLoad();//at first, have to read jsonfile
     console.log("DataManager: Read file: "+obj.filename);
@@ -65,13 +67,9 @@ function DataManager()
         console.log("Got anim load: "+p);
 
       //read level
-      if (!"level" in data)
-      {
-        dataError("DataManager: error! No level specified in "+obj.filename);
-        return;
-      }
       obj.onNewToLoad();//has to read level
-      obj.level=new Level(data["level"]);
+      console.log("DataManager try to load level file "+obj.level.jsonfile);
+      obj.level.loadfile();
       
         
       obj.onNewLoaded();//json file is read

@@ -109,6 +109,5 @@
 			},
 			"size" : [32,32]
 		}
-	},
-	"level": "data/lvl2.json"
+	}
 }

@@ -40,6 +40,11 @@ function Level(jsonfile)
     return Math.floor(x/this.tileSize[0])+Math.floor(y/this.tileSize[1])*this.mapSize[0];
   }
   
+  this.sprite2i = function(s)//sprite to index in maps (upper left corner of hitbox)
+  {
+    return Math.floor((s.x+s.currentAnim.hitbox[0][0])/this.tileSize[0])+Math.floor((s.y+s.currentAnim.hitbox[0][1])/this.tileSize[1])*this.mapSize[0];
+  }
+  
   //make a closure to read the json file
   this.loadfile = function()
   {
@@ -123,8 +128,6 @@ function Level(jsonfile)
       window.dataManager.onNewLoaded(obj.jsonfile);
     });
   };
-  
-  this.loadfile();
   
   //draw in several layers to have correct supperpositions
   //uses a list of hz sprites (right on the floor, no precise order)
