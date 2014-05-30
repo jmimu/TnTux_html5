@@ -20,6 +20,7 @@ function Level(jsonfile)
   this.tileSize=[];//[sx,sy]
   this.allSprites=[];
   this.player=0;
+  this.nextLevel=0;//then not null, go to next level
   
   this.addSprite=function(s)
   {
@@ -27,7 +28,7 @@ function Level(jsonfile)
     return s;
   }
   
-  window.level=this;
+  //window.level=this;
   
   this.cl2i = function(c,l)//column, line to index in maps
   {
@@ -129,13 +130,16 @@ function Level(jsonfile)
     });
   };
   
+ 
+	
+  //basic drawing function 
   //draw in several layers to have correct supperpositions
   //uses a list of hz sprites (right on the floor, no precise order)
-  //and vertical sprites that have to be drawn in correct order
-  this.draw=function(camera)
+  //and vertical sprites that have to be drawn in correct order 
+  this.drawBase=function(camera)
   {
-    canvas.fillStyle = "rgb("+this.backgroundColor+")";
-    canvas.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    /*canvas.fillStyle = "rgb("+this.backgroundColor+")";
+    canvas.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);*/
 
     var hzSprites=[];
     var vertSprites=[];
@@ -235,6 +239,14 @@ function Level(jsonfile)
       nextSpriteToDraw++;
     }
   }
+  
+  //by default drawing is just basic drawing
+  //this function is supposed to be overridden by LevelN classes
+  this.draw=function(camera)
+  {
+	  this.drawBase(camera);
+  }
+
   
   //returns a string containing the sens of the tile's meta
   this.touching=function(x,y)

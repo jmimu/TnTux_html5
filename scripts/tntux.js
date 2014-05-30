@@ -1,10 +1,10 @@
 var gameUpdate;//record setInterval to be able to stop it TODO: move it to canvasJM.js?
-var level;
+window.level=0;
 
 
 $(document).ready(function() //or $(function()
   {
-    level=new Level1();
+    window.level=new Level1();
   }
 );
 
@@ -28,26 +28,40 @@ startGame=function()
     window.keydown[keyName(event)] = false;
   });
   
-  var player=level.player;
-  var camera=new Camera(level);
+  var player=window.level.player;
+  var camera=new Camera();
+  camera.init(window.level);
+  
+  
+  //var lastDate=0;
   
   (update=function(){
-    for (var i=0;i<level.allSprites.length;i++)
+	//lastDate=new Date();  
+    //console.log("lastDate "+lastDate);
+
+    for (var i=0;i<window.level.allSprites.length;i++)
     {
-      level.allSprites[i].update(level);
-      if (level.allSprites[i].isToDelete())
+      window.level.allSprites[i].update(window.level);
+      if (window.level.allSprites[i].isToDelete())
       {
-        level.allSprites.splice(i,1);
+        window.level.allSprites.splice(i,1);
         i--;
       }
     }
     camera.moveTo(player.x,player.y);
     
-    level.testSpecialActions();
-    level.draw(camera);
     
+    if (window.level.testSpecialActions())
+    {
+		clearInterval(gameUpdate);
+		window.level=window.level.nextLevel;
+		console.log("Now level is "+window.level.jsonfile);
+		camera.init(window.level);
+		player=window.level.player;
+	}
+    window.level.draw(camera);
     //window.requestAnimFrame(update);
-  })();
+  });
   
   if (!globalError)
   {

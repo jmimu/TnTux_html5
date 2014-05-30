@@ -7,11 +7,17 @@ function Level1()
   window.dataManager.loadfile(startGame,"data/data1.json",this);
   
   
+  //returns true if have to change level
   this.testSpecialActions=function()
-  {
-	//console.log(this.sprite2i(this.player));  
+  { 
     if (this.metaTilesSens[this.metaMap[this.sprite2i(this.player)]-this.firstMetaTileIndex]=="s1")
-		console.log("s1!!");
-    
+    {
+      console.log("s1!!");
+      this.nextLevel=new Level2();
+      console.log("Next: "+this.nextLevel.jsonfile);
+      return true
+    }
+	
+    return false;
   }
 }

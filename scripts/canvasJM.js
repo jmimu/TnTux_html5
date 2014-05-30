@@ -24,15 +24,20 @@ window.requestAnimFrame = (function(){
            };
 })();
 
-function Camera(level)
+function Camera()
 {
-  this.level=level;
-  this.xmin=CANVAS_WIDTH/2;
-  this.ymin=CANVAS_HEIGHT/2;
-  this.xmax=level.mapSize[0]*level.tileSize[0]-CANVAS_WIDTH/2;
-  this.ymax=level.mapSize[1]*level.tileSize[1]-CANVAS_HEIGHT/2;
-  this.x=this.xmin;
-  this.y=this.xmax;
+  
+  this.init=function(level)
+  {
+    this.level=level;
+    this.xmin=CANVAS_WIDTH/2;
+    this.ymin=CANVAS_HEIGHT/2;
+    this.xmax=level.mapSize[0]*level.tileSize[0]-CANVAS_WIDTH/2;
+    this.ymax=level.mapSize[1]*level.tileSize[1]-CANVAS_HEIGHT/2;
+    this.x=this.xmin;
+    this.y=this.xmax;
+  }
+  
   
   this.moveTo=function(x,y)
   {

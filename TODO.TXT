@@ -1,4 +1,5 @@
 TODO
+* comment gérer les différentes entrées d'un même niveau ?
 * la durée des animations de marche n'est pas la même suivant les directions, bizarre
 * mettre une couche en plus "onFloor" dans le niveau, qui repertorie ce qu'il y a en ce moment sur le sol
 (trace de pas, debris, poudre) utiliser le tileset normal (pour pouvoir aussi mettre des empruntes
