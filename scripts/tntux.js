@@ -4,7 +4,7 @@ window.level=0;
 
 $(document).ready(function() //or $(function()
   {
-    window.level=new Level1();
+    window.level=new Level1("startA");
   }
 );
 

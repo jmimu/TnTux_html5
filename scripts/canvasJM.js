@@ -2,8 +2,8 @@
 //inheritence: http://stackoverflow.com/questions/7486825/javascript-inheritance
 
 //from http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
-var CANVAS_WIDTH = 32*20;
-var CANVAS_HEIGHT = 32*14;
+var CANVAS_WIDTH = 32*24;
+var CANVAS_HEIGHT = 32*16;
 
 var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
             "' height='" + CANVAS_HEIGHT + "'></canvas>");

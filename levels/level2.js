@@ -1,12 +1,12 @@
 
 //Level1 class, inherits Level
-function Level2()
+function Level2(startMetaTile)
 {
   this.snowStormIndex=3;//index of snowstorm in TopTile
   this.snowStormOffset=0;
 
   console.log("Create Level2");
-  Level.call(this,"levels/level2.json");// Parent constructor
+  Level.call(this,"levels/level2.json",startMetaTile);// Parent constructor
   window.dataManager.loadfile(startGame,"data/data1.json",this);
   
   //returns true if have to change level
@@ -18,22 +18,22 @@ function Level2()
     }
     if (this.metaTilesSens[this.metaMap[this.sprite2i(this.player)]-this.firstMetaTileIndex]=="s2")
     {
-      this.player.x=2*this.tileSize[0];
+      this.player.x=1*this.tileSize[0];
     }
     if (this.metaTilesSens[this.metaMap[this.sprite2i(this.player)]-this.firstMetaTileIndex]=="s4")
     {
-      this.player.x=(this.mapSize[0]-3)*this.tileSize[0];
+      this.player.x=(this.mapSize[0]-2)*this.tileSize[0];
     }
-    if (this.metaTilesSens[this.metaMap[this.sprite2i(this.player)]-this.firstMetaTileIndex]=="s3")
+    if (this.metaTilesSens[this.metaMap[this.sprite2i(this.player)]-this.firstMetaTileIndex]=="endC")
     {
-      this.nextLevel=new Level1();
+      this.nextLevel=new Level1("startC");
       console.log("Next: "+this.nextLevel.jsonfile);
       return true
     }
 	
     return false;
   }
-  
+ 
   //override drawing function to add snow storm
   this.draw=function(camera)
   {

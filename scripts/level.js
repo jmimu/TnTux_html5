@@ -1,6 +1,7 @@
 window.level=0;//the game level, to be accessed everywhere
 
-function Level(jsonfile)
+//startMetaTile: string of the starting tile ("startA","startB"...)
+function Level(jsonfile,startMetaTile)
 {
   this.jsonfile=jsonfile;
   this.backgroundColor=[150,230,250];
@@ -13,7 +14,8 @@ function Level(jsonfile)
   this.tiles=0;//Anim
   this.topTiles=0;//Anim
   //s1-s5: special tiles that will be limked to a specific function in LevelN class
-  this.metaTilesSens=["wall","hurt","slip","die","begin","end","break","autoL","autoR","autoU","autoD","s1","s2","s3","s4","s5"];//must be in the same order as meta tiles picture
+  this.metaTilesSens=["wall","hurt","slip","die","?","?","break","autoL","autoR","autoU","autoD","s1","s2","s3","s4","s5",
+    "startA","endA","startB","endB","startC","endC","startD","endD","startE","endE","startF","endF"];//must be in the same order as meta tiles picture
   this.firstMainTileIndex=0;
   this.firstTopTileIndex=0;
   this.firstMetaTileIndex=0;
@@ -21,6 +23,7 @@ function Level(jsonfile)
   this.allSprites=[];
   this.player=0;
   this.nextLevel=0;//then not null, go to next level
+  this.startMetaTile=startMetaTile;//string of the starting tile ("startA","startB"...)
   
   this.addSprite=function(s)
   {
@@ -104,7 +107,7 @@ function Level(jsonfile)
                 obj.blockingMap.push(true);
               else
                 obj.blockingMap.push(false);
-              if ((obj.metaTilesSens[obj.metaMap[i]-obj.firstMetaTileIndex]=="begin")
+              if ((obj.metaTilesSens[obj.metaMap[i]-obj.firstMetaTileIndex]==obj.startMetaTile)
                 &&(obj.player==0))
               {
                 obj.player=new Player((i%obj.mapSize[0])*obj.tileSize[0],(i/obj.mapSize[0])*obj.tileSize[1]);
@@ -241,7 +244,7 @@ function Level(jsonfile)
   }
   
   //by default drawing is just basic drawing
-  //this function is supposed to be overridden by LevelN classes
+  //this dummy function is supposed to be overridden by LevelN classes
   this.draw=function(camera)
   {
 	  this.drawBase(camera);
